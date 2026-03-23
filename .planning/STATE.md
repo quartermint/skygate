@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-03-23T16:29:41.536Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 03-03-PLAN.md
+last_updated: "2026-03-23T19:55:22.811Z"
 progress:
   total_phases: 5
   completed_phases: 1
-  total_plans: 9
-  completed_plans: 8
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Show pilots what's eating their data, then give them the controls to stop it.
-**Current focus:** Phase 02 — usage-dashboard
+**Current focus:** Phase 03 — tunnel-infrastructure
 
 ## Current Position
 
-Phase: 03
-Plan: Not started
+Phase: 03 (tunnel-infrastructure) — EXECUTING
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -55,6 +55,9 @@ Plan: Not started
 | Phase 02 P01 | 9 | 2 tasks | 18 files |
 | Phase 02 P03 | 8 | 3 tasks | 13 files |
 | Phase 02 P04 | 3 | 2 tasks | 9 files |
+| Phase 03 P01 | 3 | 2 tasks | 10 files |
+| Phase 03 P02 | 5 | 2 tasks | 11 files |
+| Phase 03 P03 | 6 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -100,6 +103,16 @@ Recent decisions affecting current work:
 - [Phase 02]: Caddy host-header matching for CNA check URL interception -- DNAT preserves Host, @captive_check matcher triggers on known CNA domains
 - [Phase 02]: nftables allowed_macs set with 24h timeout for captive portal session management
 - [Phase 02]: Multi-daemon Makefile pattern: per-daemon build/cross-build targets with aggregate targets
+- [Phase 03]: Table=off in wg0.conf delegates routing to nftables policy rules, preventing wg-quick conflicts
+- [Phase 03]: ct mark restore updated to 'ct mark \!= 0x0' for dual-fwmark (0x1 bypass, 0x2 tunnel) architecture
+- [Phase 03]: MSS clamping to 1380 on wg0 as defense-in-depth against MTU-related silent packet loss
+- [Phase 03]: Policy routing via Ansible shell task (not PostUp/PostDown) for reliability per Pitfall 5
+- [Phase 03]: All tunnel nftables rules gated by wg_enabled variable for clean Phase 1 fallback
+- [Phase 03]: Standalone Go binary for tunnel monitor (separation of concerns from bypass daemon)
+- [Phase 03]: Hysteresis via 3 consecutive-count thresholds prevents flapping on transient Starlink handoffs
+- [Phase 03]: Fallback removes ip rule (fwmark 0x2 table 200) so traffic falls through to main table -- atomic and reversible
+- [Phase 03]: Static CAKE bandwidth on wg0 (no dynamic autorate) -- single autorate on eth0 only, wg0 uses fixed ceiling
+- [Phase 03]: Wireguard role positioned after routing, before qos in Ansible playbook dependency order
 
 ### Pending Todos
 
@@ -113,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T16:19:54.362Z
-Stopped at: Completed 02-04-PLAN.md
+Last session: 2026-03-23T19:55:22.809Z
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None

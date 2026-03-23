@@ -68,8 +68,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 03-01-PLAN.md -- WireGuard plumbing: server Docker Compose, Pi Ansible wireguard role, nftables tunnel marking, policy routing
-- [ ] 03-02-PLAN.md -- Tunnel monitor daemon: Go health check, state machine with hysteresis, routing fallback
+- [x] 03-01-PLAN.md -- WireGuard plumbing: server Docker Compose, Pi Ansible wireguard role, nftables tunnel marking, policy routing
+- [x] 03-02-PLAN.md -- Tunnel monitor daemon: Go health check, state machine with hysteresis, routing fallback
 - [ ] 03-03-PLAN.md -- Integration wiring: Makefile targets, playbook role inclusion, QoS on wg0, BATS tests
 
 ### Phase 4: Content Compression Proxy
