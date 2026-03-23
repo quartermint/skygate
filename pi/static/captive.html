@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate - Welcome</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="captive">
+    <div class="captive-container">
+        <h1>Welcome to SkyGate</h1>
+        <p class="captive-subtitle">In-Flight Bandwidth Management</p>
+        <div class="terms">
+            <p>This network optimizes bandwidth for all passengers aboard this aircraft.</p>
+            <p>By connecting, you agree to:</p>
+            <ul>
+                <li>DNS-level ad and tracker blocking to conserve bandwidth</li>
+                <li>Per-device usage monitoring (MAC address only)</li>
+                <li>Bandwidth shaping to ensure fair access for all devices</li>
+            </ul>
+            <p><small>No personal data, browsing history, or content is collected or stored.</small></p>
+        </div>
+        <form action="/api/captive/accept" method="POST">
+            <button type="submit" class="accept-btn">Accept &amp; Connect</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/htmx.min.js"></script>
+    <script src="/static/htmx-ext-sse.js"></script>
+    <script src="/static/chart.umd.min.js"></script>
+</head>
+<body hx-ext="sse">
+    <header>
+        <h1>SkyGate</h1>
+        <nav><a href="/static/settings.html">Settings</a></nav>
+    </header>
+
+    <!-- Section 1: Plan cap usage bar + dollar savings (D-19, D-17) -->
+    <section id="cap-section" sse-connect="/api/events">
+        <div sse-swap="cap-status" hx-swap="innerHTML">
+            <!-- SSE replaces: progress bar with color escalation -->
+            <div class="cap-bar"><div class="cap-fill" style="width:0%"></div></div>
+            <p class="cap-text">Loading usage data...</p>
+        </div>
+        <div sse-swap="savings" hx-swap="innerHTML">
+            <p class="savings-amount">$0.00 saved this session</p>
+        </div>
+        <!-- Alert banners appear here at 50/75/90% thresholds (D-20) -->
+        <div sse-swap="alerts" hx-swap="innerHTML" id="alert-area"></div>
+    </section>
+
+    <!-- Section 2: Real-time bandwidth graph (D-03) -->
+    <section id="bandwidth-section">
+        <h2>Bandwidth</h2>
+        <div class="chart-container">
+            <canvas id="bw-chart"></canvas>
+        </div>
+    </section>
+
+    <!-- Section 3: Per-device table (D-02) -->
+    <section id="devices-section" sse-connect="/api/events">
+        <h2>Connected Devices</h2>
+        <div sse-swap="devices" hx-swap="innerHTML">
+            <table class="device-table">
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Usage</th>
+                        <th>Top Domain</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td colspan="4">Waiting for data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Section 4: Category pie chart (D-04) -->
+    <section id="categories-section">
+        <h2>Where Your Data Goes</h2>
+        <div class="chart-container">
+            <canvas id="category-pie"></canvas>
+        </div>
+    </section>
+
+    <footer>
+        <p>SkyGate &mdash; Bandwidth Management for General Aviation</p>
+    </footer>
+
+    <script>
+    // Initialize bandwidth line chart (created once, updated via SSE)
+    const bwCtx = document.getElementById('bw-chart').getContext('2d');
+    const bwChart = new Chart(bwCtx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Throughput (Mbps)',
+                data: [],
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59,130,246,0.1)',
+                fill: true,
+                tension: 0.3,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                x: { display: false },
+                y: { beginAtZero: true, title: { display: true, text: 'Mbps' } }
+            },
+            plugins: { legend: { display: false } }
+        }
+    });
+
+    // Initialize category pie chart
+    const pieCtx = document.getElementById('category-pie').getContext('2d');
+    const pieChart = new Chart(pieCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Loading...'],
+            datasets: [{
+                data: [1],
+                backgroundColor: [
+                    '#3b82f6', '#ef4444', '#f59e0b', '#10b981',
+                    '#8b5cf6', '#ec4899', '#06b6d4', '#6b7280'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 12 } }
+            }
+        }
+    });
+
+    // SSE event listener for chart data updates (JSON, not HTML swap)
+    document.body.addEventListener('htmx:sseMessage', function(evt) {
+        if (evt.detail.type === 'chart-data') {
+            var d = JSON.parse(evt.detail.data);
+            bwChart.data.labels = d.labels;
+            bwChart.data.datasets[0].data = d.values;
+            bwChart.update('none');
+        }
+        if (evt.detail.type === 'categories') {
+            var d = JSON.parse(evt.detail.data);
+            pieChart.data.labels = d.labels;
+            pieChart.data.datasets[0].data = d.values;
+            pieChart.update('none');
+        }
+    });
+    </script>
+</body>
+</html>
