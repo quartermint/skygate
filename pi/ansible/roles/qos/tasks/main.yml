@@ -25,6 +25,13 @@
   become: true
   changed_when: false
 
+- name: Initialize CAKE qdisc on WireGuard tunnel
+  ansible.builtin.command:
+    cmd: tc qdisc replace dev {{ wg_interface | default('wg0') }} root cake bandwidth {{ wg_cake_base_rate_kbps | default(15000) }}kbit
+  become: true
+  changed_when: false
+  when: wg_enabled | default(false)
+
 - name: Deploy autorate script
   ansible.builtin.template:
     src: autorate.sh.j2
