@@ -19,7 +19,7 @@
 
 - name: Deploy bypass domains config
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../../config/bypass-domains.yaml"
+    src: "{{ playbook_dir }}/../config/bypass-domains.yaml"
     dest: "{{ skygate_config_dir }}/bypass-domains.yaml"
     owner: root
     group: root
