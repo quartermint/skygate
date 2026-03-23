@@ -2,8 +2,8 @@
 phase: 2
 slug: usage-dashboard
 status: draft
-nyquist_compliant: false
-wave_0_complete: false
+nyquist_compliant: true
+wave_0_complete: true
 created: 2026-03-23
 ---
 
@@ -38,12 +38,12 @@ created: 2026-03-23
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 02-01-01 | 01 | 1 | DASH-01 | unit | `go test ./cmd/monitor-daemon/ -short` | ❌ W0 | ⬜ pending |
-| 02-01-02 | 01 | 1 | DASH-01 | unit | `go test ./cmd/monitor-daemon/ -run TestSQLite` | ❌ W0 | ⬜ pending |
+| 02-01-01 | 01 | 1 | DASH-01 | unit | `go test ./cmd/dashboard-daemon/ -short` | ❌ W0 | ⬜ pending |
+| 02-01-02 | 01 | 1 | DASH-01 | unit | `go test ./cmd/dashboard-daemon/ -run TestSQLite` | ❌ W0 | ⬜ pending |
 | 02-02-01 | 02 | 1 | DASH-04 | integration | `curl -s http://192.168.4.1/ \| grep -q "terms"` | ❌ W0 | ⬜ pending |
-| 02-03-01 | 03 | 2 | DASH-02, DASH-03 | unit | `go test ./cmd/monitor-daemon/ -run TestSSE` | ❌ W0 | ⬜ pending |
-| 02-04-01 | 04 | 2 | DASH-05 | unit | `go test ./cmd/monitor-daemon/ -run TestSavings` | ❌ W0 | ⬜ pending |
-| 02-05-01 | 05 | 3 | DASH-06 | unit | `go test ./cmd/monitor-daemon/ -run TestPlanCap` | ❌ W0 | ⬜ pending |
+| 02-03-01 | 03 | 2 | DASH-02, DASH-03 | unit | `go test ./cmd/dashboard-daemon/ -run TestSSE` | ❌ W0 | ⬜ pending |
+| 02-04-01 | 04 | 2 | DASH-05 | unit | `go test ./cmd/dashboard-daemon/ -run TestSavings` | ❌ W0 | ⬜ pending |
+| 02-05-01 | 05 | 3 | DASH-06 | unit | `go test ./cmd/dashboard-daemon/ -run TestPlanCap` | ❌ W0 | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -51,10 +51,10 @@ created: 2026-03-23
 
 ## Wave 0 Requirements
 
-- [ ] `cmd/monitor-daemon/monitor_test.go` — stubs for DASH-01 (per-device tracking)
-- [ ] `cmd/monitor-daemon/sse_test.go` — stubs for DASH-03 (SSE endpoint)
-- [ ] `cmd/monitor-daemon/savings_test.go` — stubs for DASH-05 (savings calculation)
-- [ ] `cmd/monitor-daemon/config_test.go` — stubs for DASH-06 (plan cap config)
+- [ ] `cmd/dashboard-daemon/monitor_test.go` — stubs for DASH-01 (per-device tracking)
+- [ ] `cmd/dashboard-daemon/sse_test.go` — stubs for DASH-03 (SSE endpoint)
+- [ ] `cmd/dashboard-daemon/savings_test.go` — stubs for DASH-05 (savings calculation)
+- [ ] `cmd/dashboard-daemon/config_test.go` — stubs for DASH-06 (plan cap config)
 
 ---
 
