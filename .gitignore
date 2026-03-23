@@ -1,0 +1,12 @@
+# Go
+/bin/
+/bypass-daemon
+*.exe
+*.test
+*.out
+
+# Ansible
+*.retry
+
+# OS
+.DS_Store
