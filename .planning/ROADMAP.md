@@ -80,7 +80,12 @@ Plans:
   1. Images load visibly smaller (WebP transcoding, quality reduction) when browsing through the proxy compared to direct
   2. JS and CSS files are minified by the proxy, reducing transfer size on the satellite link
   3. The remote proxy server deploys with a single `docker compose up` command including WireGuard server endpoint
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 04-01-PLAN.md -- Proxy foundation: YAML config loader, CA cert generation, SQLite compression logging
+- [ ] 04-02-PLAN.md -- Compression pipeline: image transcoder (WebP), text minifier (JS/CSS/HTML), Content-Type handler dispatch
+- [ ] 04-03-PLAN.md -- Server wiring: goproxy MITM setup, main entry point, Dockerfile, Docker Compose, Makefile
 
 ### Phase 5: Certificate Management
 **Goal**: Passengers choose their savings level -- "Quick Connect" for zero-friction DNS blocking or "Max Savings" with CA cert install for full proxy compression -- and cert-pinned apps never break
@@ -103,5 +108,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Pi Network Foundation | 3/5 | In Progress | - |
 | 2. Usage Dashboard | 0/4 | Planned    |  |
 | 3. Tunnel Infrastructure | 0/3 | Planned | - |
-| 4. Content Compression Proxy | 0/TBD | Not started | - |
+| 4. Content Compression Proxy | 0/3 | Planned | - |
 | 5. Certificate Management | 0/TBD | Not started | - |
