@@ -1,0 +1,146 @@
+# Domain-to-category mapping for SkyGate usage dashboard.
+# Static mapping of top domains to display categories for the "whoa moment" pie chart.
+# Source: Curated from StevenBlack hosts, Pi-hole common blocklists.
+# Subdomains are matched automatically (e.g., m.facebook.com matches facebook.com).
+
+categories:
+  Social Media:
+    - facebook.com
+    - instagram.com
+    - twitter.com
+    - x.com
+    - tiktok.com
+    - snapchat.com
+    - reddit.com
+    - linkedin.com
+    - pinterest.com
+    - threads.net
+    - discord.com
+    - tumblr.com
+    - mastodon.social
+    - bsky.app
+    - whatsapp.com
+    - telegram.org
+    - signal.org
+    - wechat.com
+    - viber.com
+    - line.me
+
+  Streaming:
+    - youtube.com
+    - netflix.com
+    - hulu.com
+    - disneyplus.com
+    - max.com
+    - peacocktv.com
+    - spotify.com
+    - music.apple.com
+    - twitch.tv
+    - primevideo.com
+    - paramountplus.com
+    - crunchyroll.com
+    - pandora.com
+    - soundcloud.com
+    - deezer.com
+    - tubi.com
+    - pluto.tv
+    - fubo.tv
+    - appletv.apple.com
+    - podcasts.apple.com
+
+  Ads and Trackers:
+    - doubleclick.net
+    - googlesyndication.com
+    - googleadservices.com
+    - analytics.google.com
+    - crashlytics.com
+    - appsflyer.com
+    - branch.io
+    - adjust.com
+    - mixpanel.com
+    - segment.com
+    - amplitude.com
+    - hotjar.com
+    - newrelic.com
+    - sentry.io
+    - bugsnag.com
+    - datadog.com
+    - optimizely.com
+    - taboola.com
+    - outbrain.com
+    - criteo.com
+    - pubmatic.com
+    - openx.com
+    - adnxs.com
+    - rubiconproject.com
+    - moat.com
+    - scorecardresearch.com
+    - quantserve.com
+    - comscore.com
+    - chartbeat.com
+    - ads-twitter.com
+
+  OS Updates:
+    - swscan.apple.com
+    - updates.cdn-apple.com
+    - windowsupdate.com
+    - play.googleapis.com
+    - dl.google.com
+    - xboxlive.com
+    - playstation.net
+    - update.microsoft.com
+    - mesu.apple.com
+    - appldnld.apple.com
+    - gg.apple.com
+    - officecdn.microsoft.com
+    - msedge.api.cdp.microsoft.com
+    - download.windowsupdate.com
+    - fe3.delivery.mp.microsoft.com
+
+  Cloud Sync:
+    - icloud.com
+    - photos.googleapis.com
+    - dropbox.com
+    - onedrive.live.com
+    - drive.google.com
+    - box.com
+    - mega.nz
+    - pcloud.com
+    - sync.com
+    - backblaze.com
+    - carbonite.com
+    - idrive.com
+    - sugarsync.com
+    - tresorit.com
+    - spideroak.com
+
+  News:
+    - cnn.com
+    - foxnews.com
+    - nytimes.com
+    - bbc.com
+    - reuters.com
+    - apnews.com
+    - washingtonpost.com
+    - wsj.com
+    - usatoday.com
+    - nbcnews.com
+    - abcnews.go.com
+    - cbsnews.com
+    - theguardian.com
+    - npr.org
+    - bloomberg.com
+
+  Aviation:
+    - foreflight.com
+    - garmin.com
+    - aviationweather.gov
+    - flightaware.com
+    - fltplan.com
+    - skyvector.com
+    - windy.com
+    - 1800wxbrief.com
+    - aopa.org
+    - faa.gov
+
+  Other: []

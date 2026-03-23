@@ -1,0 +1,7 @@
+port: 8081
+poll_interval_sec: 5
+pihole_address: "http://localhost:8080"
+pihole_password: ""
+db_path: "/data/skygate/dashboard.db"
+categories_file: "/data/skygate/domain-categories.yaml"
+static_dir: "/opt/skygate/static"
