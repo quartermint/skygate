@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-03-23T20:02:29.640Z"
+stopped_at: Completed 01-05-PLAN.md
+last_updated: "2026-03-23T23:01:25.840Z"
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 12
-  completed_plans: 11
+  completed_phases: 3
+  total_plans: 15
+  completed_plans: 12
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Show pilots what's eating their data, then give them the controls to stop it.
-**Current focus:** Phase 03 — tunnel-infrastructure
+**Current focus:** Phase 01 — pi-network-foundation
 
 ## Current Position
 
-Phase: 04
+Phase: 02
 Plan: Not started
 
 ## Performance Metrics
@@ -58,6 +58,7 @@ Plan: Not started
 | Phase 03 P01 | 3 | 2 tasks | 10 files |
 | Phase 03 P02 | 5 | 2 tasks | 11 files |
 | Phase 03 P03 | 6 | 2 tasks | 6 files |
+| Phase 01 P05 | 2 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -113,6 +114,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Fallback removes ip rule (fwmark 0x2 table 200) so traffic falls through to main table -- atomic and reversible
 - [Phase 03]: Static CAKE bandwidth on wg0 (no dynamic autorate) -- single autorate on eth0 only, wg0 uses fixed ceiling
 - [Phase 03]: Wireguard role positioned after routing, before qos in Ansible playbook dependency order
+- [Phase 01]: OverlayFS enabled manually after Ansible deploy (not automated) to prevent bricking during setup
+- [Phase 01]: Data partition uses ext4 with data=journal for crash-safe writes on /data
+- [Phase 01]: First-boot uses serial console TTY input -- simpler than web UI, works before AP is configured
 
 ### Pending Todos
 
@@ -126,6 +130,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T19:55:22.809Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-03-23T22:52:33.179Z
+Stopped at: Completed 01-05-PLAN.md
 Resume file: None
