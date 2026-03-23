@@ -1,0 +1,33 @@
+# SkyGate Content Compression Proxy - Multi-stage CGo Build
+# Requires libwebp for image transcoding (kolesa-team/go-webp)
+
+# Stage 1: Build
+FROM golang:1.26-bookworm AS builder
+
+# Install libwebp for CGo build (kolesa-team/go-webp requirement)
+RUN apt-get update && apt-get install -y --no-install-recommends libwebp-dev && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN CGO_ENABLED=1 go build -o /proxy-server ./cmd/proxy-server/
+
+# Stage 2: Runtime
+FROM debian:bookworm-slim
+
+# Install libwebp runtime (not -dev) and CA certificates
+RUN apt-get update && apt-get install -y --no-install-recommends libwebp7 ca-certificates curl && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /proxy-server /usr/local/bin/proxy-server
+
+# Data directory for CA certs and SQLite database
+RUN mkdir -p /data/skygate
+
+# Health check: proxy health endpoint on CA download port
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+ENTRYPOINT ["/usr/local/bin/proxy-server"]
+CMD ["--config", "/etc/skygate/proxy.yaml"]
