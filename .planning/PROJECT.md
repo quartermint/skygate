@@ -12,7 +12,10 @@ An open source bandwidth management appliance for general aviation aircraft usin
 
 ### Validated
 
-(None yet — ship to validate)
+- WireGuard tunnel to remote proxy server for content stripping — Phase 3
+- Policy-based routing: aviation domains → direct, everything else → tunnel — Phase 3
+- Offline/degraded mode — Pi-hole continues if tunnel drops, auto-reconnect — Phase 3
+- One-command Docker Compose deployment for remote server — Phase 3
 
 ### Active
 
@@ -22,16 +25,15 @@ An open source bandwidth management appliance for general aviation aircraft usin
 - [ ] Captive portal with terms acceptance and usage dashboard link
 - [ ] Aviation app bypass — ForeFlight, Garmin Pilot, weather APIs route directly to Starlink, not through proxy
 - [ ] Dynamic QoS preventing Starlink bufferbloat (cake-autorate)
-- [ ] WireGuard tunnel to remote proxy server for content stripping
+
 - [ ] Content compression proxy on remote server — image transcoding (JPEG→WebP, quality reduction), JS/CSS minification (compy)
 - [ ] MITM support with CA cert distribution via captive portal ("Quick Connect" vs "Max Savings" modes)
-- [ ] Offline/degraded mode — Pi-hole continues if tunnel drops, auto-reconnect
+
 - [ ] Certificate pinning bypass list for banking/auth apps
-- [ ] Policy-based routing: aviation domains → direct, everything else → tunnel
+
 - [ ] Content stripping rules: video block, image compress, social media text-only, update block
 - [ ] 3D printed aviation case (PETG, STL files in repo)
 - [ ] Pre-configured SD card image for zero-config setup
-- [ ] One-command Docker Compose deployment for remote server
 
 ### Out of Scope
 
@@ -79,6 +81,10 @@ Generated via gstack /office-hours with 2 rounds of adversarial review (21 issue
 |----------|-----------|---------|
 | Dashboard ships before content stripping | Pilots don't know what eats their data — awareness creates demand for controls. "Whoa" moment is the pie chart, not the silent proxy. | — Pending |
 | compy over mitmproxy for proxy engine | Go binary (~20MB RAM) vs Python (~200-500MB). Built-in image transcoding + JS/CSS minification without addons. Could run on Pi directly. | — Pending |
+| Custom Go proxy on goproxy, not compy | compy unmaintained (last commit ~2021). Build fresh on elazarl/goproxy with minify + imaging libs. | Phase 3 decision |
+| Dual-fwmark policy routing | 0x1 bypass (table 100, direct Starlink), 0x2 tunnel (table 200, WireGuard). Clean separation. | Phase 3 validated |
+| Static CAKE on wg0, autorate on eth0 only | Single autorate instance on physical link. wg0 gets static bandwidth ceiling. Simpler, no measurement interference. | Phase 3 validated |
+| Tunnel monitor with 3-check hysteresis | Prevents flapping during brief satellite handoffs. 3 consecutive failures to degrade, 3 successes to recover. | Phase 3 validated |
 | cake-autorate for Starlink QoS | 498 stars, first-class Starlink support, prevents bufferbloat via dynamic CAKE bandwidth adjustment. Runs on any Linux including Pi. | — Pending |
 | Two-layer TLS strategy | Layer 1 (DNS, all devices, zero friction) + Layer 2 (MITM proxy, browser-only, requires CA cert). "Quick Connect" vs "Max Savings" modes. | — Pending |
 | Split Phase B into B.1 (Awareness) + B.2 (Control) | B.1 = dashboard + DNS blocking (shippable v0.1). B.2 = WireGuard + compy proxy (full architecture). | — Pending |
@@ -103,4 +109,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-22 after initialization*
+*Last updated: 2026-03-23 after Phase 3*
