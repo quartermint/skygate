@@ -2,6 +2,7 @@
 /bin/
 /bypass-daemon
 /dashboard-daemon
+/tunnel-monitor
 *.exe
 *.test
 *.out
