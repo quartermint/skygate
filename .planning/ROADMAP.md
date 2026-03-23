@@ -30,7 +30,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. ForeFlight and Garmin Pilot connect and sync without interference from DNS blocking or proxy
   4. The Pi survives abrupt power loss (master switch off) without filesystem corruption and boots back to working state
   5. Latency remains stable under load -- no bufferbloat spikes when multiple devices are active
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md -- Project scaffolding: Go module, Ansible skeleton, config files, Makefile, test infrastructure
+- [ ] 01-02-PLAN.md -- WiFi AP + Pi-hole: hostapd, DHCP/DNS, DNS ad/tracker blocking, aviation whitelisting
+- [ ] 01-03-PLAN.md -- Aviation bypass: Go bypass daemon, nftables sets, policy routing, Ansible routing role
+- [ ] 01-04-PLAN.md -- QoS: CAKE autorate script, BATS tests, Ansible QoS role
+- [ ] 01-05-PLAN.md -- Read-only filesystem: OverlayFS, data partition, first-boot setup, final review
 
 ### Phase 2: Usage Dashboard
 **Goal**: Pilots can see exactly what's eating their Starlink data cap in real time, with dollar-amount savings and plan cap tracking -- the viral screenshot moment
@@ -83,7 +90,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Pi Network Foundation | 0/TBD | Not started | - |
+| 1. Pi Network Foundation | 0/5 | Planned | - |
 | 2. Usage Dashboard | 0/TBD | Not started | - |
 | 3. Tunnel Infrastructure | 0/TBD | Not started | - |
 | 4. Content Compression Proxy | 0/TBD | Not started | - |
