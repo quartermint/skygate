@@ -12,9 +12,9 @@ SkyGate delivers a Raspberry Pi-based bandwidth management appliance for GA airc
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Pi Network Foundation** - WiFi AP with DNS blocking, aviation bypass, QoS, and read-only root filesystem
-- [ ] **Phase 2: Usage Dashboard** - Per-device usage tracking, captive portal, bandwidth savings display -- the "whoa" moment
-- [ ] **Phase 3: Tunnel Infrastructure** - WireGuard tunnel to remote server with policy-based routing
+- [x] **Phase 1: Pi Network Foundation** - WiFi AP with DNS blocking, aviation bypass, QoS, and read-only root filesystem *(2026-03-23)*
+- [x] **Phase 2: Usage Dashboard** - Per-device usage tracking, captive portal, bandwidth savings display -- the "whoa" moment *(2026-03-23)*
+- [x] **Phase 3: Tunnel Infrastructure** - WireGuard tunnel to remote server with policy-based routing *(2026-03-23)*
 - [ ] **Phase 4: Content Compression Proxy** - Go-based MITM proxy on remote server for image transcoding and JS/CSS minification
 - [ ] **Phase 5: Certificate Management** - CA cert distribution, two-tier UX ("Quick Connect" vs "Max Savings"), cert-pinning bypass
 
@@ -37,7 +37,7 @@ Plans:
 - [x] 01-02-PLAN.md -- WiFi AP + Pi-hole: hostapd, DHCP/DNS, DNS ad/tracker blocking, aviation whitelisting
 - [x] 01-03-PLAN.md -- Aviation bypass: Go bypass daemon, nftables sets, policy routing, Ansible routing role
 - [x] 01-04-PLAN.md -- QoS: CAKE autorate script, BATS tests, Ansible QoS role
-- [ ] 01-05-PLAN.md -- Read-only filesystem: OverlayFS, data partition, first-boot setup, final review
+- [x] 01-05-PLAN.md -- Read-only filesystem: OverlayFS, data partition, first-boot setup, final review
 
 ### Phase 2: Usage Dashboard
 **Goal**: Pilots can see exactly what's eating their Starlink data cap in real time, with dollar-amount savings and plan cap tracking -- the viral screenshot moment
@@ -55,7 +55,7 @@ Plans:
 - [x] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
 - [x] 02-02-PLAN.md -- Dashboard frontend: HTMX/Chart.js static assets, HTML pages, mobile-first CSS
 - [x] 02-03-PLAN.md -- API + business logic: Pi-hole client, savings calculator, SSE streaming, REST endpoints, captive portal handler
-- [ ] 02-04-PLAN.md -- Deployment: Ansible dashboard role, Caddy config, nftables captive portal rules, systemd service, Makefile updates
+- [x] 02-04-PLAN.md -- Deployment: Ansible dashboard role, Caddy config, nftables captive portal rules, systemd service, Makefile updates
 
 ### Phase 3: Tunnel Infrastructure
 **Goal**: Non-aviation traffic flows through an encrypted WireGuard tunnel to a remote server while aviation apps continue routing directly to Starlink
@@ -70,7 +70,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md -- WireGuard plumbing: server Docker Compose, Pi Ansible wireguard role, nftables tunnel marking, policy routing
 - [x] 03-02-PLAN.md -- Tunnel monitor daemon: Go health check, state machine with hysteresis, routing fallback
-- [ ] 03-03-PLAN.md -- Integration wiring: Makefile targets, playbook role inclusion, QoS on wg0, BATS tests
+- [x] 03-03-PLAN.md -- Integration wiring: Makefile targets, playbook role inclusion, QoS on wg0, BATS tests
 
 ### Phase 4: Content Compression Proxy
 **Goal**: A remote proxy server compresses web content (images, JS, CSS) before it traverses the expensive satellite link, delivering 80-90% additional savings beyond DNS blocking
@@ -105,8 +105,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Pi Network Foundation | 3/5 | In Progress | - |
-| 2. Usage Dashboard | 0/4 | Planned    |  |
-| 3. Tunnel Infrastructure | 0/3 | Planned | - |
-| 4. Content Compression Proxy | 0/3 | Planned | - |
+| 1. Pi Network Foundation | 5/5 | Complete | 2026-03-23 |
+| 2. Usage Dashboard | 4/4 | Complete | 2026-03-23 |
+| 3. Tunnel Infrastructure | 3/3 | Complete | 2026-03-23 |
+| 4. Content Compression Proxy | 0/3 | In Progress | - |
 | 5. Certificate Management | 0/TBD | Not started | - |
