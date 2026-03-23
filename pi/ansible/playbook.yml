@@ -7,5 +7,6 @@
     - networking
     - pihole
     - routing
+    - wireguard
     - qos
     - firstboot
