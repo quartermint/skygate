@@ -1,0 +1,14 @@
+# Pi-hole blocklist URLs (conservative defaults per D-10)
+blocklists:
+  - url: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+    name: "StevenBlack Unified"
+    comment: "Ads + malware, ~90K domains, well-maintained"
+    enabled: true
+  - url: "https://small.oisd.nl/"
+    name: "OISD Light"
+    comment: "Curated, low false-positive rate"
+    enabled: true
+  # Do NOT include aggressive lists by default:
+  # - EasyList (too many false positives for aviation)
+  # - OISD Full (too aggressive, blocks cloud services)
+  # - Energized (blocks legitimate CDNs)

@@ -1,0 +1,4 @@
+---
+- name: Base role placeholder
+  ansible.builtin.debug:
+    msg: "Base role not yet implemented"

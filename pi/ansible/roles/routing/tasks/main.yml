@@ -1,0 +1,4 @@
+---
+- name: Routing role placeholder
+  ansible.builtin.debug:
+    msg: "Routing role not yet implemented"

@@ -1,0 +1,33 @@
+---
+# Network interfaces
+ap_interface: wlan1          # USB WiFi adapter (MT7612U)
+uplink_interface: eth0       # Ethernet to Starlink Mini
+ap_subnet: "192.168.4.0/24"
+ap_gateway: "192.168.4.1"
+dhcp_range_start: "192.168.4.100"
+dhcp_range_end: "192.168.4.200"
+domain_name: "skygate.local"
+
+# WiFi AP (per D-06, D-07, D-08, D-09)
+wifi_ssid: "SkyGate"          # Overridden by first-boot
+wifi_password: "PLACEHOLDER"  # Overridden by first-boot
+wifi_channel: 6               # Non-overlapping 2.4 GHz channel
+wifi_country_code: "US"
+max_clients: 8
+
+# QoS (CAKE autorate)
+cake_min_rate_kbps: 5000      # 5 Mbps floor
+cake_base_rate_kbps: 20000    # 20 Mbps baseline
+cake_max_rate_kbps: 100000    # 100 Mbps ceiling
+cake_baseline_rtt_ms: 40      # Starlink baseline RTT
+cake_threshold_ms: 15         # Latency increase threshold
+cake_decrease_factor: "0.7"   # Drop to 70% on bufferbloat
+cake_increase_step_kbps: 5000 # 5 Mbps increase per cycle
+cake_stable_threshold: 5      # Cycles before increasing
+autorate_reflector: "1.1.1.1"
+autorate_interval_s: 2
+
+# Paths
+skygate_data_dir: "/data/skygate"
+skygate_opt_dir: "/opt/skygate"
+skygate_config_dir: "/data/skygate"

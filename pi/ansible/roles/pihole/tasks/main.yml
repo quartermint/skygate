@@ -1,0 +1,4 @@
+---
+- name: Pi-hole role placeholder
+  ansible.builtin.debug:
+    msg: "Pi-hole role not yet implemented"
