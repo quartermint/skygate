@@ -1,4 +1,83 @@
 ---
-- name: Pi-hole role placeholder
-  ansible.builtin.debug:
-    msg: "Pi-hole role not yet implemented"
+# Pi-hole role: DNS filtering, DHCP server, aviation domain whitelisting
+# Installs Pi-hole v6, configures DHCP on AP subnet, enables conservative blocking
+
+- name: Create Pi-hole config directory
+  ansible.builtin.file:
+    path: /etc/pihole
+    state: directory
+    mode: "0755"
+
+- name: Deploy setupVars.conf for unattended install
+  ansible.builtin.template:
+    src: pihole-setupVars.conf.j2
+    dest: /etc/pihole/setupVars.conf
+    mode: "0644"
+
+- name: Copy Pi-hole install script
+  ansible.builtin.copy:
+    src: install-pihole.sh
+    dest: /tmp/install-pihole.sh
+    mode: "0755"
+
+- name: Run Pi-hole install (idempotent)
+  ansible.builtin.command: /tmp/install-pihole.sh
+  args:
+    creates: /usr/local/bin/pihole
+
+- name: Deploy pihole.toml (v6 config)
+  ansible.builtin.template:
+    src: pihole.toml.j2
+    dest: /etc/pihole/pihole.toml
+    mode: "0644"
+  notify: restart pihole-ftl
+
+- name: Create dnsmasq.d directory
+  ansible.builtin.file:
+    path: /etc/dnsmasq.d
+    state: directory
+    mode: "0755"
+
+- name: Deploy custom dnsmasq config
+  ansible.builtin.template:
+    src: 01-skygate-whitelist.conf.j2
+    dest: /etc/dnsmasq.d/01-skygate.conf
+    mode: "0644"
+  notify: restart pihole-ftl
+
+- name: Whitelist aviation domains in Pi-hole
+  ansible.builtin.command: "pihole --white-regex '{{ item }}'"
+  loop:
+    - '(\.|^)foreflight\.com$'
+    - '(\.|^)garmin\.com$'
+    - '(\.|^)aviationweather\.gov$'
+    - '(\.|^)weather\.gov$'
+    - '(\.|^)faa\.gov$'
+    - '(\.|^)flightaware\.com$'
+    - '(\.|^)flightradar24\.com$'
+    - '(\.|^)adsbexchange\.com$'
+    - '(\.|^)aopa\.org$'
+    - '(\.|^)fltplan\.com$'
+    - '(\.|^)skyvector\.com$'
+    - 'captive\.apple\.com'
+    - 'connectivitycheck\.gstatic\.com'
+  changed_when: false
+
+- name: Configure blocklists
+  ansible.builtin.command: "pihole adlist add '{{ item.url }}'"
+  loop:
+    - url: "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+      name: "StevenBlack Unified"
+    - url: "https://small.oisd.nl/"
+      name: "OISD Light"
+  changed_when: false
+
+- name: Update gravity database
+  ansible.builtin.command: pihole -g
+  changed_when: false
+
+- name: Enable and start pihole-FTL
+  ansible.builtin.systemd:
+    name: pihole-FTL
+    enabled: true
+    state: started
