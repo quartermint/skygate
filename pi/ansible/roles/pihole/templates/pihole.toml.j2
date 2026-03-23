@@ -1,0 +1,26 @@
+# Managed by Ansible - SkyGate Pi-hole v6 configuration
+# Per D-10: Conservative blocking (ads + trackers only)
+# Per D-11: Silent block (NXDOMAIN, no custom block pages)
+
+[dns]
+upstreamDNS = ["1.1.1.1", "8.8.8.8"]
+cache_size = 10000
+listeningMode = "local"
+blockingMode = "NULL"
+dnssec = false
+
+[dhcp]
+active = true
+start = "{{ dhcp_range_start }}"
+end = "{{ dhcp_range_end }}"
+router = "{{ ap_gateway }}"
+netmask = "255.255.255.0"
+domain = "{{ domain_name }}"
+leaseTime = "24h"
+interface = "{{ ap_interface }}"
+
+[webserver]
+port = "8080"
+
+[misc]
+etc_dnsmasq_d = true

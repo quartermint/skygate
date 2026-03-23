@@ -1,0 +1,7 @@
+---
+# Pi-hole role handlers
+
+- name: restart pihole-ftl
+  ansible.builtin.systemd:
+    name: pihole-FTL
+    state: restarted

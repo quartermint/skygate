@@ -1,0 +1,13 @@
+# Managed by Ansible - SkyGate aviation domain whitelist
+# These domains must NEVER be blocked by Pi-hole (safety-critical per D-12)
+# Applied as custom dnsmasq config via Pi-hole's etc_dnsmasq_d
+
+# Bind DHCP to AP interface only
+interface={{ ap_interface }}
+bind-interfaces
+
+# DNS cache size
+cache-size=10000
+
+# Set Pi-hole as DNS server for DHCP clients
+dhcp-option=6,{{ ap_gateway }}
