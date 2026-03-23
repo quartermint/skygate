@@ -110,30 +110,30 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NET-01 | — | Pending |
-| NET-02 | — | Pending |
-| DNS-01 | — | Pending |
-| DASH-01 | — | Pending |
-| DASH-02 | — | Pending |
-| DASH-03 | — | Pending |
-| DASH-04 | — | Pending |
-| DASH-05 | — | Pending |
-| DASH-06 | — | Pending |
-| ROUTE-01 | — | Pending |
-| ROUTE-02 | — | Pending |
-| QOS-01 | — | Pending |
-| TUN-01 | — | Pending |
-| PROXY-01 | — | Pending |
-| PROXY-02 | — | Pending |
-| CERT-01 | — | Pending |
-| CERT-02 | — | Pending |
-| CERT-03 | — | Pending |
+| NET-01 | Phase 1 | Pending |
+| NET-02 | Phase 1 | Pending |
+| DNS-01 | Phase 1 | Pending |
+| DASH-01 | Phase 2 | Pending |
+| DASH-02 | Phase 2 | Pending |
+| DASH-03 | Phase 2 | Pending |
+| DASH-04 | Phase 2 | Pending |
+| DASH-05 | Phase 2 | Pending |
+| DASH-06 | Phase 2 | Pending |
+| ROUTE-01 | Phase 1 | Pending |
+| ROUTE-02 | Phase 3 | Pending |
+| QOS-01 | Phase 1 | Pending |
+| TUN-01 | Phase 3 | Pending |
+| PROXY-01 | Phase 4 | Pending |
+| PROXY-02 | Phase 4 | Pending |
+| CERT-01 | Phase 5 | Pending |
+| CERT-02 | Phase 5 | Pending |
+| CERT-03 | Phase 5 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 after initial definition*
+*Last updated: 2026-03-23 after roadmap creation*
