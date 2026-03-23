@@ -1,0 +1,14 @@
+# Managed by Ansible - SkyGate WireGuard Client
+# Do NOT edit manually on the Pi
+
+[Interface]
+PrivateKey = {{ wg_private_key }}
+Address = {{ wg_client_address }}/{{ wg_subnet_mask | default('24') }}
+MTU = {{ wg_mtu | default(1420) }}
+Table = off
+
+[Peer]
+PublicKey = {{ wg_server_public_key }}
+Endpoint = {{ wg_server_endpoint }}:{{ wg_server_port | default(51820) }}
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = {{ wg_keepalive | default(25) }}

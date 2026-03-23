@@ -1,0 +1,83 @@
+---
+- name: Install wireguard-tools
+  ansible.builtin.apt:
+    name: wireguard-tools
+    state: present
+    update_cache: true
+
+- name: Deploy WireGuard client config
+  ansible.builtin.template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    owner: root
+    group: root
+    mode: "0600"
+  notify:
+    - restart wg-quick
+  when: wg_enabled | default(false)
+
+- name: Deploy tunnel monitor config
+  ansible.builtin.template:
+    src: tunnel-monitor.yaml.j2
+    dest: "{{ skygate_config_dir }}/tunnel-monitor.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart skygate-tunnel-monitor
+  when: wg_enabled | default(false)
+
+- name: Deploy tunnel monitor binary
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../bin/skygate-tunnel-monitor-linux-arm64"
+    dest: "{{ skygate_opt_dir }}/skygate-tunnel-monitor"
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - restart skygate-tunnel-monitor
+  when: wg_enabled | default(false)
+
+- name: Deploy tunnel monitor systemd service
+  ansible.builtin.template:
+    src: skygate-tunnel-monitor.service.j2
+    dest: /etc/systemd/system/skygate-tunnel-monitor.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - reload systemd
+    - restart skygate-tunnel-monitor
+  when: wg_enabled | default(false)
+
+- name: Configure policy routing for tunnel (table 200)
+  ansible.builtin.shell: |
+    CHANGED=0
+    if ! ip rule show | grep -q "fwmark 0x2"; then
+      ip rule add fwmark 0x2 table 200 priority 200
+      CHANGED=1
+    fi
+    if ! ip route show table 200 | grep -q "default"; then
+      ip route add default dev wg0 table 200
+      CHANGED=1
+    fi
+    echo "changed=$CHANGED"
+  register: tunnel_routing_result
+  changed_when: "'changed=1' in tunnel_routing_result.stdout"
+  when: wg_enabled | default(false)
+
+- name: Enable and start WireGuard tunnel
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: wg_enabled | default(false)
+
+- name: Enable and start tunnel monitor
+  ansible.builtin.systemd:
+    name: skygate-tunnel-monitor
+    enabled: true
+    state: started
+    daemon_reload: true
+  when: wg_enabled | default(false)

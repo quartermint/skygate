@@ -1,0 +1,11 @@
+# SkyGate Tunnel Monitor Configuration
+# Default values for development/testing
+interface: "wg0"
+check_interval_s: 5
+handshake_timeout_s: 180
+recovery_threshold_s: 30
+fail_count: 3
+recover_count: 3
+fwmark: "0x2"
+table: 200
+priority: 200
