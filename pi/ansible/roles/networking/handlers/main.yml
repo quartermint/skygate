@@ -1,0 +1,17 @@
+---
+# Networking role handlers
+
+- name: restart networkmanager
+  ansible.builtin.systemd:
+    name: NetworkManager
+    state: restarted
+
+- name: restart hostapd
+  ansible.builtin.systemd:
+    name: hostapd
+    state: restarted
+
+- name: restart nftables
+  ansible.builtin.systemd:
+    name: nftables
+    state: restarted

@@ -1,0 +1,35 @@
+# Managed by Ansible - SkyGate WiFi Access Point
+# Per D-07: 2.4 GHz only
+# Per D-09: Max 8 simultaneous devices
+
+interface={{ ap_interface }}
+driver=nl80211
+ssid={{ wifi_ssid }}
+hw_mode=g
+channel={{ wifi_channel }}
+
+# 802.11n support
+ieee80211n=1
+wmm_enabled=1
+ht_capab=[HT40+][SHORT-GI-20][SHORT-GI-40][DSSS_CCK-40]
+
+# Authentication (WPA2-PSK)
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+wpa_pairwise=CCMP
+rsn_pairwise=CCMP
+wpa_passphrase={{ wifi_password }}
+
+# Limits
+max_num_sta={{ max_clients }}
+
+# Regulatory
+country_code={{ wifi_country_code }}
+ieee80211d=1
+
+# Logging
+logger_syslog=-1
+logger_syslog_level=2
+logger_stdout=-1
+logger_stdout_level=2

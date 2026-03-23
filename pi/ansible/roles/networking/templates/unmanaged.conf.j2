@@ -1,0 +1,4 @@
+# Managed by Ansible - SkyGate
+# Prevent NetworkManager from managing the AP interface
+[keyfile]
+unmanaged-devices=interface-name:{{ ap_interface }}

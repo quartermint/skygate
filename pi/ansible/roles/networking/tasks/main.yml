@@ -1,4 +1,82 @@
 ---
-- name: Networking role placeholder
-  ansible.builtin.debug:
-    msg: "Networking role not yet implemented"
+# Networking role: hostapd WiFi AP, NetworkManager exclusion, nftables firewall/NAT
+# Configures wlan1 as a WPA2-PSK access point with firewall and NAT routing
+
+- name: Install networking packages
+  ansible.builtin.apt:
+    name:
+      - hostapd
+    state: present
+
+- name: Stop wpa_supplicant for AP interface
+  ansible.builtin.systemd:
+    name: wpa_supplicant
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Deploy NetworkManager unmanaged config
+  ansible.builtin.template:
+    src: unmanaged.conf.j2
+    dest: /etc/NetworkManager/conf.d/skygate-unmanaged.conf
+    mode: "0644"
+  notify: restart networkmanager
+
+- name: Check if AP interface has static IP
+  ansible.builtin.shell: |
+    ip addr show {{ ap_interface }} 2>/dev/null | grep -q "{{ ap_gateway }}"
+  register: ap_ip_check
+  changed_when: false
+  failed_when: false
+
+- name: Configure static IP on AP interface
+  ansible.builtin.command: >
+    ip addr add {{ ap_gateway }}/24 dev {{ ap_interface }}
+  when: ap_ip_check.rc != 0
+  changed_when: true
+
+- name: Deploy hostapd configuration
+  ansible.builtin.template:
+    src: hostapd.conf.j2
+    dest: /etc/hostapd/hostapd.conf
+    mode: "0600"
+  notify: restart hostapd
+
+- name: Unmask hostapd (Bookworm ships it masked)
+  ansible.builtin.systemd:
+    name: hostapd
+    masked: false
+
+- name: Enable and start hostapd
+  ansible.builtin.systemd:
+    name: hostapd
+    enabled: true
+    state: started
+
+- name: Deploy nftables configuration
+  ansible.builtin.template:
+    src: nftables.conf.j2
+    dest: /etc/nftables.conf
+    mode: "0644"
+  notify: restart nftables
+
+- name: Enable and start nftables
+  ansible.builtin.systemd:
+    name: nftables
+    enabled: true
+    state: started
+
+- name: Configure policy routing for aviation bypass
+  ansible.builtin.shell: |
+    CHANGED=0
+    if ! ip rule show | grep -q "fwmark 0x1"; then
+      ip rule add fwmark 0x1 table 100 priority 100
+      CHANGED=1
+    fi
+    if ! ip route show table 100 | grep -q "default"; then
+      ip route add default dev {{ uplink_interface }} table 100
+      CHANGED=1
+    fi
+    echo "changed=$CHANGED"
+  register: policy_routing_result
+  changed_when: "'changed=1' in policy_routing_result.stdout"
