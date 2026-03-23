@@ -1,0 +1,20 @@
+---
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: restart skygate-dashboard
+  ansible.builtin.systemd:
+    name: skygate-dashboard
+    state: restarted
+    daemon_reload: true
+
+- name: reload caddy
+  ansible.builtin.command:
+    cmd: caddy reload --config /etc/caddy/Caddyfile
+  ignore_errors: true
+
+- name: reload nftables
+  ansible.builtin.systemd:
+    name: nftables
+    state: reloaded

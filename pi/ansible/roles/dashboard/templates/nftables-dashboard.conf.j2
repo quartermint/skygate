@@ -1,0 +1,15 @@
+# Managed by Ansible - SkyGate Dashboard nftables additions
+# Included from main nftables.conf
+# Do NOT edit manually on the Pi
+
+# Devices that have accepted captive portal terms
+add set inet skygate allowed_macs { type ether_addr; flags timeout; timeout 24h; }
+
+# Per-device byte counters for dashboard
+add set inet skygate device_counters { typeof ether saddr; flags dynamic; counter; timeout 24h; }
+
+# Captive portal: redirect HTTP from unauthenticated devices
+add rule inet skygate prerouting iifname "{{ ap_interface }}" ether saddr != @allowed_macs tcp dport 80 dnat to {{ ap_gateway }}:{{ caddy_port }}
+
+# Track per-device bytes for authenticated devices
+add rule inet skygate forward iifname "{{ ap_interface }}" ether saddr @allowed_macs update @device_counters { ether saddr } accept

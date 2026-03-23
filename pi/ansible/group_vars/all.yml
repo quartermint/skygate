@@ -31,3 +31,13 @@ autorate_interval_s: 2
 skygate_data_dir: "/data/skygate"
 skygate_opt_dir: "/opt/skygate"
 skygate_config_dir: "/data/skygate"
+
+# Dashboard daemon
+dashboard_port: 8081
+dashboard_poll_interval_sec: 5
+dashboard_db_path: "{{ skygate_data_dir }}/dashboard.db"
+dashboard_categories_file: "{{ skygate_config_dir }}/domain-categories.yaml"
+dashboard_static_dir: "{{ skygate_opt_dir }}/static"
+pihole_address: "http://localhost:8080"
+pihole_password: ""
+caddy_port: 80

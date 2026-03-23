@@ -1,0 +1,46 @@
+# Managed by Ansible - SkyGate Dashboard
+# Do NOT edit manually on the Pi
+
+:{{ caddy_port }} {
+    # OS captive portal check URL interception (D-07)
+    # DNAT preserves Host header -- match known CNA check domains
+    # iOS/macOS: captive.apple.com
+    # Android:   connectivitycheck.gstatic.com, clients3.google.com
+    # Windows:   www.msftconnecttest.com, msftconnecttest.com
+    @captive_check {
+        header Host captive.apple.com
+        header Host connectivitycheck.gstatic.com
+        header Host www.msftconnecttest.com
+        header Host msftconnecttest.com
+        header Host clients3.google.com
+    }
+    handle @captive_check {
+        root * {{ dashboard_static_dir }}
+        rewrite * /captive.html
+        file_server
+    }
+
+    # API requests -> Go daemon
+    handle /api/* {
+        reverse_proxy localhost:{{ dashboard_port }}
+    }
+
+    # Captive portal page (direct access)
+    handle /captive* {
+        root * {{ dashboard_static_dir }}
+        file_server
+    }
+
+    # Static dashboard files
+    handle /static/* {
+        root * {{ skygate_opt_dir }}
+        file_server
+    }
+
+    # Default: serve dashboard index
+    handle {
+        root * {{ dashboard_static_dir }}
+        try_files {path} /index.html
+        file_server
+    }
+}
