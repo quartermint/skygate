@@ -1,6 +1,7 @@
 # Go
 /bin/
 /bypass-daemon
+/dashboard-daemon
 *.exe
 *.test
 *.out
