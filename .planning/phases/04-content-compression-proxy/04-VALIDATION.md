@@ -19,7 +19,7 @@ created: 2026-03-23
 |----------|-------|
 | **Framework** | go test (stdlib) |
 | **Config file** | none — Go test infrastructure established in Phase 1 |
-| **Quick run command** | `go test ./server/proxy/... -short -count=1` |
+| **Quick run command** | `go test ./cmd/proxy-server/... -short -count=1` |
 | **Full suite command** | `go test ./... -short -count=1 && bats pi/scripts/tests/` |
 | **Estimated runtime** | ~5 seconds |
 
@@ -27,7 +27,7 @@ created: 2026-03-23
 
 ## Sampling Rate
 
-- **After every task commit:** Run `go test ./server/proxy/... -short -count=1`
+- **After every task commit:** Run `go test ./cmd/proxy-server/... -short -count=1`
 - **After every plan wave:** Run `go test ./... -short -count=1 && bats pi/scripts/tests/`
 - **Before `/gsd:verify-work`:** Full suite must be green
 - **Max feedback latency:** 5 seconds
@@ -38,11 +38,12 @@ created: 2026-03-23
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 04-01-01 | 01 | 1 | PROXY-01 | unit | `go test ./server/proxy/... -run TestTranscode -count=1` | ❌ W0 | ⬜ pending |
-| 04-01-02 | 01 | 1 | PROXY-01 | unit | `go test ./server/proxy/... -run TestMinify -count=1` | ❌ W0 | ⬜ pending |
-| 04-02-01 | 02 | 1 | PROXY-02 | unit | `go test ./server/proxy/... -run TestConfig -count=1` | ❌ W0 | ⬜ pending |
-| 04-02-02 | 02 | 1 | PROXY-02 | integration | `docker compose -f server/docker-compose.yml config` | ✅ | ⬜ pending |
-| 04-03-01 | 03 | 2 | PROXY-01, PROXY-02 | integration | `go test ./... -short -count=1` | ✅ | ⬜ pending |
+| 04-01-01 | 01 | 1 | PROXY-01 | unit | `go test ./cmd/proxy-server/... -run TestLoadConfig -count=1` | ❌ W0 | ⬜ pending |
+| 04-01-02 | 01 | 1 | PROXY-01 | unit | `go test ./cmd/proxy-server/... -run TestLoadOrGenerateCA -count=1` | ❌ W0 | ⬜ pending |
+| 04-02-01 | 02 | 2 | PROXY-01 | unit | `go test ./cmd/proxy-server/... -run TestTranscode -count=1` | ❌ W0 | ⬜ pending |
+| 04-02-02 | 02 | 2 | PROXY-01 | unit | `go test ./cmd/proxy-server/... -run TestHandleResponse -count=1` | ❌ W0 | ⬜ pending |
+| 04-03-01 | 03 | 3 | PROXY-01, PROXY-02 | unit | `go test ./cmd/proxy-server/... -run TestSetupProxy -count=1` | ❌ W0 | ⬜ pending |
+| 04-03-02 | 03 | 3 | PROXY-02 | integration | `CGO_ENABLED=1 go build -o /dev/null ./cmd/proxy-server/` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -50,7 +51,7 @@ created: 2026-03-23
 
 ## Wave 0 Requirements
 
-- [ ] `server/proxy/*_test.go` — test stubs for image transcoding and minification
+- [ ] `cmd/proxy-server/*_test.go` — test stubs for config, certgen, transcoder, minifier, handlers, proxy
 - [ ] Go module dependencies added (go-webp, tdewolff/minify, goproxy)
 
 *Existing Go test infrastructure from Phase 1/2 covers framework needs.*
