@@ -1,0 +1,4 @@
+---
+- name: QoS role placeholder
+  ansible.builtin.debug:
+    msg: "QoS role not yet implemented"

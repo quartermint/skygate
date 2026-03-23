@@ -1,0 +1,38 @@
+# Aviation app bypass domains
+# These domains route directly to Starlink, never through proxy or DNS blocking.
+# Safety-critical: blocking these degrades pilot situational awareness.
+bypass_domains:
+  # ForeFlight
+  - "foreflight.com"
+  - "*.foreflight.com"
+  # Garmin Pilot / Garmin Aviation
+  - "garmin.com"
+  - "*.garmin.com"
+  - "fly.garmin.com"
+  # FAA / Aviation Weather
+  - "aviationweather.gov"
+  - "*.aviationweather.gov"
+  - "tfr.faa.gov"
+  - "notams.faa.gov"
+  - "*.weather.gov"
+  # ADS-B Services
+  - "flightaware.com"
+  - "*.flightaware.com"
+  - "flightradar24.com"
+  - "*.flightradar24.com"
+  - "adsbexchange.com"
+  - "*.adsbexchange.com"
+  # AOPA
+  - "aopa.org"
+  - "*.aopa.org"
+  # FltPlan Go
+  - "fltplan.com"
+  - "*.fltplan.com"
+  # SkyVector / VFR charts
+  - "skyvector.com"
+  - "*.skyvector.com"
+  # Connectivity checks (required for captive portal detection)
+  - "captive.apple.com"
+  - "connectivitycheck.gstatic.com"
+  - "www.msftconnecttest.com"
+  - "www.msftncsi.com"

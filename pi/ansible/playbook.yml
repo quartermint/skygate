@@ -1,0 +1,11 @@
+---
+- name: SkyGate Pi Network Foundation
+  hosts: skygate
+  become: true
+  roles:
+    - base
+    - networking
+    - pihole
+    - routing
+    - qos
+    - firstboot

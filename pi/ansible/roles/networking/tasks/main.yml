@@ -1,0 +1,4 @@
+---
+- name: Networking role placeholder
+  ansible.builtin.debug:
+    msg: "Networking role not yet implemented"
