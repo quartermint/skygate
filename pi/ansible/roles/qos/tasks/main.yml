@@ -1,4 +1,56 @@
 ---
-- name: QoS role placeholder
-  ansible.builtin.debug:
-    msg: "QoS role not yet implemented"
+# QoS role: CAKE qdisc traffic shaping + autorate for Starlink bufferbloat prevention
+
+- name: Install QoS dependencies
+  ansible.builtin.apt:
+    name:
+      - bc
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+
+- name: Ensure skygate opt directory exists
+  ansible.builtin.file:
+    path: "{{ skygate_opt_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Initialize CAKE qdisc on Starlink uplink
+  ansible.builtin.command:
+    cmd: tc qdisc replace dev {{ uplink_interface }} root cake bandwidth {{ cake_base_rate_kbps }}kbit
+  become: true
+  changed_when: false
+
+- name: Deploy autorate script
+  ansible.builtin.template:
+    src: autorate.sh.j2
+    dest: "{{ skygate_opt_dir }}/autorate.sh"
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  notify: restart skygate-autorate
+
+- name: Deploy autorate systemd service
+  ansible.builtin.template:
+    src: skygate-autorate.service.j2
+    dest: /etc/systemd/system/skygate-autorate.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify:
+    - reload systemd
+    - restart skygate-autorate
+
+- name: Enable and start autorate service
+  ansible.builtin.systemd:
+    name: skygate-autorate
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true

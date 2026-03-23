@@ -1,0 +1,97 @@
+#!/bin/bash
+# Managed by Ansible - SkyGate CAKE Autorate
+# Do NOT edit manually on the Pi
+
+set -euo pipefail
+
+INTERFACE="${INTERFACE:-{{ uplink_interface }}}"
+REFLECTOR="${REFLECTOR:-{{ autorate_reflector }}}"
+MIN_RATE_KBPS="${MIN_RATE_KBPS:-{{ cake_min_rate_kbps }}}"
+BASE_RATE_KBPS="${BASE_RATE_KBPS:-{{ cake_base_rate_kbps }}}"
+MAX_RATE_KBPS="${MAX_RATE_KBPS:-{{ cake_max_rate_kbps }}}"
+BASELINE_RTT_MS="${BASELINE_RTT_MS:-{{ cake_baseline_rtt_ms }}}"
+THRESHOLD_MS="${THRESHOLD_MS:-{{ cake_threshold_ms }}}"
+INCREASE_STEP_KBPS="${INCREASE_STEP_KBPS:-{{ cake_increase_step_kbps }}}"
+DECREASE_FACTOR="${DECREASE_FACTOR:-{{ cake_decrease_factor }}}"
+STABLE_THRESHOLD="${STABLE_THRESHOLD:-{{ cake_stable_threshold }}}"
+INTERVAL_S="${INTERVAL_S:-{{ autorate_interval_s }}}"
+
+CURRENT_RATE="$BASE_RATE_KBPS"
+STABLE_COUNT=0
+DRY_RUN="${DRY_RUN:-false}"
+
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run) DRY_RUN=true ;;
+    esac
+done
+
+measure_rtt() {
+    local rtt
+    rtt=$(fping -c 3 -p 200 -q "$REFLECTOR" 2>&1 | grep -oP 'avg = \K[0-9.]+' || echo "999")
+    echo "${rtt%.*}"
+}
+
+calculate_rate() {
+    local current_rate="$1"
+    local rtt_ms="$2"
+    local stable="$3"
+    local excess=$((rtt_ms - BASELINE_RTT_MS))
+    local new_rate="$current_rate"
+    local new_stable="$stable"
+
+    if [ "$excess" -gt "$THRESHOLD_MS" ]; then
+        new_rate=$(echo "$current_rate * $DECREASE_FACTOR" | bc | cut -d. -f1)
+        [ "$new_rate" -lt "$MIN_RATE_KBPS" ] && new_rate="$MIN_RATE_KBPS"
+        new_stable=0
+    else
+        new_stable=$((stable + 1))
+        if [ "$new_stable" -ge "$STABLE_THRESHOLD" ]; then
+            new_rate=$((current_rate + INCREASE_STEP_KBPS))
+            [ "$new_rate" -gt "$MAX_RATE_KBPS" ] && new_rate="$MAX_RATE_KBPS"
+            new_stable=0
+        fi
+    fi
+
+    echo "$new_rate $new_stable"
+}
+
+apply_cake() {
+    local rate_kbps="$1"
+    if [ "$DRY_RUN" = true ]; then
+        echo "DRY_RUN: tc qdisc change dev $INTERFACE root cake bandwidth ${rate_kbps}kbit"
+        return 0
+    fi
+    tc qdisc change dev "$INTERFACE" root cake bandwidth "${rate_kbps}kbit" 2>/dev/null || \
+    tc qdisc replace dev "$INTERFACE" root cake bandwidth "${rate_kbps}kbit"
+}
+
+main() {
+    echo "[autorate] Starting SkyGate CAKE autorate on $INTERFACE"
+    echo "[autorate] Rate range: ${MIN_RATE_KBPS}-${MAX_RATE_KBPS} kbps, baseline RTT: ${BASELINE_RTT_MS}ms"
+    apply_cake "$CURRENT_RATE"
+    echo "[autorate] Initial CAKE bandwidth: ${CURRENT_RATE}kbit"
+
+    while true; do
+        local rtt
+        rtt=$(measure_rtt)
+        local result
+        result=$(calculate_rate "$CURRENT_RATE" "$rtt" "$STABLE_COUNT")
+        local new_rate new_stable
+        new_rate=$(echo "$result" | awk '{print $1}')
+        new_stable=$(echo "$result" | awk '{print $2}')
+
+        if [ "$new_rate" -ne "$CURRENT_RATE" ]; then
+            apply_cake "$new_rate"
+            echo "[autorate] RTT=${rtt}ms excess=$((rtt - BASELINE_RTT_MS))ms rate: ${CURRENT_RATE} -> ${new_rate} kbps"
+            CURRENT_RATE="$new_rate"
+        fi
+        STABLE_COUNT="$new_stable"
+
+        sleep "$INTERVAL_S"
+    done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
+    main
+fi

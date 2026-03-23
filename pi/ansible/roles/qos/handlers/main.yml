@@ -1,0 +1,12 @@
+---
+- name: restart skygate-autorate
+  ansible.builtin.systemd:
+    name: skygate-autorate
+    state: restarted
+    daemon_reload: true
+  become: true
+
+- name: reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
