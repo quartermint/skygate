@@ -1,4 +1,26 @@
 ---
-- name: First-boot role placeholder
-  ansible.builtin.debug:
-    msg: "First-boot role not yet implemented"
+# First-boot setup role for SkyGate
+# Deploys the first-boot script and systemd service.
+# The service runs once on first boot (ConditionPathExists guard)
+# to let the pilot set their WiFi SSID and password.
+
+- name: Deploy first-boot setup script
+  ansible.builtin.template:
+    src: firstboot.sh.j2
+    dest: "{{ skygate_opt_dir }}/firstboot.sh"
+    mode: '0755'
+
+- name: Deploy first-boot systemd service
+  ansible.builtin.template:
+    src: skygate-firstboot.service.j2
+    dest: /etc/systemd/system/skygate-firstboot.service
+    mode: '0644'
+  notify: reload systemd
+
+- name: Enable first-boot service (runs on actual first boot)
+  ansible.builtin.systemd:
+    name: skygate-firstboot
+    enabled: true
+    daemon_reload: true
+    # NOTE: do NOT start it here -- it runs on actual first boot
+    # via ConditionPathExists=!{{ skygate_data_dir }}/.firstboot-complete
