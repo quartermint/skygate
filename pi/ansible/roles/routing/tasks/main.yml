@@ -1,4 +1,46 @@
 ---
-- name: Routing role placeholder
-  ansible.builtin.debug:
-    msg: "Routing role not yet implemented"
+- name: Create SkyGate opt directory
+  ansible.builtin.file:
+    path: "{{ skygate_opt_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Deploy bypass daemon binary
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../bin/skygate-bypass-linux-arm64"
+    dest: "{{ skygate_opt_dir }}/skygate-bypass"
+    owner: root
+    group: root
+    mode: "0755"
+  notify:
+    - restart skygate-bypass
+
+- name: Deploy bypass domains config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../config/bypass-domains.yaml"
+    dest: "{{ skygate_config_dir }}/bypass-domains.yaml"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - restart skygate-bypass
+
+- name: Deploy skygate-bypass systemd service
+  ansible.builtin.template:
+    src: skygate-bypass.service.j2
+    dest: /etc/systemd/system/skygate-bypass.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - reload systemd
+    - restart skygate-bypass
+
+- name: Enable and start bypass daemon
+  ansible.builtin.systemd:
+    name: skygate-bypass
+    enabled: true
+    state: started
+    daemon_reload: true

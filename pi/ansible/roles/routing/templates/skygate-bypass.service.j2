@@ -1,0 +1,26 @@
+# Managed by Ansible - SkyGate
+[Unit]
+Description=SkyGate Aviation Bypass Daemon
+Documentation=https://github.com/quartermint/skygate
+After=network-online.target nftables.service
+Wants=network-online.target
+Requires=nftables.service
+
+[Service]
+Type=simple
+ExecStart={{ skygate_opt_dir }}/skygate-bypass -config {{ skygate_config_dir }}/bypass-domains.yaml -interval 60s
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=skygate-bypass
+
+# Security hardening
+NoNewPrivileges=false
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ skygate_data_dir }}
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
