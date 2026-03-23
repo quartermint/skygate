@@ -49,8 +49,13 @@ Plans:
   3. A real-time bandwidth graph updates live showing current throughput across all connected devices
   4. The dashboard displays a dollar amount of bandwidth saved (e.g., "$12.50 saved this flight") based on Starlink overage rates
   5. User can configure their Starlink plan cap and see usage-against-cap with alerts at 50%, 75%, and 90% thresholds
-**Plans**: TBD
-**UI hint**: yes
+**Plans**: 4 plans
+
+Plans:
+- [ ] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
+- [ ] 02-02-PLAN.md -- Dashboard frontend: HTMX/Chart.js static assets, HTML pages, mobile-first CSS
+- [ ] 02-03-PLAN.md -- API + business logic: Pi-hole client, savings calculator, SSE streaming, REST endpoints, captive portal handler
+- [ ] 02-04-PLAN.md -- Deployment: Ansible dashboard role, Caddy config, nftables captive portal rules, systemd service, Makefile updates
 
 ### Phase 3: Tunnel Infrastructure
 **Goal**: Non-aviation traffic flows through an encrypted WireGuard tunnel to a remote server while aviation apps continue routing directly to Starlink
@@ -91,7 +96,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Pi Network Foundation | 3/5 | In Progress | - |
-| 2. Usage Dashboard | 0/TBD | Not started | - |
+| 2. Usage Dashboard | 0/4 | Planned | - |
 | 3. Tunnel Infrastructure | 0/TBD | Not started | - |
 | 4. Content Compression Proxy | 0/TBD | Not started | - |
 | 5. Certificate Management | 0/TBD | Not started | - |
