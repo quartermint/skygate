@@ -52,7 +52,7 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
+- [x] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
 - [ ] 02-02-PLAN.md -- Dashboard frontend: HTMX/Chart.js static assets, HTML pages, mobile-first CSS
 - [ ] 02-03-PLAN.md -- API + business logic: Pi-hole client, savings calculator, SSE streaming, REST endpoints, captive portal handler
 - [ ] 02-04-PLAN.md -- Deployment: Ansible dashboard role, Caddy config, nftables captive portal rules, systemd service, Makefile updates
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Pi Network Foundation | 3/5 | In Progress | - |
-| 2. Usage Dashboard | 0/4 | Planned | - |
+| 2. Usage Dashboard | 1/4 | In Progress | - |
 | 3. Tunnel Infrastructure | 0/TBD | Not started | - |
 | 4. Content Compression Proxy | 0/TBD | Not started | - |
 | 5. Certificate Management | 0/TBD | Not started | - |

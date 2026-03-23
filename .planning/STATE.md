@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Phase complete — ready for verification
-stopped_at: Phase 1 all plans executed, starting Phase 2
-last_updated: "2026-03-23T15:17:27.022Z"
+status: Executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-23T15:57:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 0
-  total_plans: 5
-  completed_plans: 4
+  total_plans: 9
+  completed_plans: 5
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Show pilots what's eating their data, then give them the controls to stop it.
-**Current focus:** Phase 01 — pi-network-foundation
+**Current focus:** Phase 02 — usage-dashboard
 
 ## Current Position
 
-Phase: 01 (pi-network-foundation) — EXECUTING
-Plan: 5 of 5
+Phase: 02 (usage-dashboard) — EXECUTING
+Plan: 2 of 4
 
 ## Performance Metrics
 
@@ -51,6 +51,7 @@ Plan: 5 of 5
 | Phase 01 P03 | 7min | 2 tasks | 13 files |
 | Phase 01 P04 | 6min | 2 tasks | 7 files |
 | Phase 01 P05 | 3 | 2 tasks | 7 files |
+| Phase 02 P01 | 9min | 2 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Cert-pinning bypass uses nftables set + proxy TCP passthrough (traffic still routes through WireGuard)
 - [Phase 05]: YAML config + dashboard UI for bypass list management (consistent with Phase 1 pattern)
 - [Phase 05]: Post-flight cert removal instructions via dashboard + physical QR card
+- [Phase 02]: modernc.org/sqlite chosen over mattn/go-sqlite3 for CGO_ENABLED=0 cross-compilation compatibility
+- [Phase 02]: Nanosecond timestamps for device_usage to avoid UNIQUE constraint collisions at high write rates
+- [Phase 02]: Subdomain matching via domain-label walking for category lookup (m.facebook.com matches facebook.com)
 
 ### Pending Todos
 
@@ -97,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T15:17:26.961Z
-Stopped at: Phase 1 all plans executed, starting Phase 2
+Last session: 2026-03-23T15:57:00.000Z
+Stopped at: Completed 02-01-PLAN.md
 Resume file: None
