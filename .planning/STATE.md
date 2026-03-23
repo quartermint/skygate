@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Executing
+status: Ready to execute
 stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-23T15:57:00.000Z"
+last_updated: "2026-03-23T15:57:54.540Z"
 progress:
   total_phases: 5
   completed_phases: 0
   total_plans: 9
-  completed_plans: 5
+  completed_plans: 4
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 02 (usage-dashboard) — EXECUTING
-Plan: 2 of 4
+Plan: 3 of 4
 
 ## Performance Metrics
 
@@ -51,7 +51,8 @@ Plan: 2 of 4
 | Phase 01 P03 | 7min | 2 tasks | 13 files |
 | Phase 01 P04 | 6min | 2 tasks | 7 files |
 | Phase 01 P05 | 3 | 2 tasks | 7 files |
-| Phase 02 P01 | 9min | 2 tasks | 18 files |
+| Phase 02 P02 | 3 | 2 tasks | 7 files |
+| Phase 02 P01 | 9 | 2 tasks | 18 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,9 @@ Recent decisions affecting current work:
 - [Phase 05]: Cert-pinning bypass uses nftables set + proxy TCP passthrough (traffic still routes through WireGuard)
 - [Phase 05]: YAML config + dashboard UI for bypass list management (consistent with Phase 1 pattern)
 - [Phase 05]: Post-flight cert removal instructions via dashboard + physical QR card
+- [Phase 02]: Chart.js singleton pattern: create once, update via SSE to avoid memory leaks
+- [Phase 02]: Captive portal has zero JS dependencies for iOS CNA compatibility
+- [Phase 02]: Dark aviation theme (#0f172a base) for cockpit readability and viral screenshot aesthetics
 - [Phase 02]: modernc.org/sqlite chosen over mattn/go-sqlite3 for CGO_ENABLED=0 cross-compilation compatibility
 - [Phase 02]: Nanosecond timestamps for device_usage to avoid UNIQUE constraint collisions at high write rates
 - [Phase 02]: Subdomain matching via domain-label walking for category lookup (m.facebook.com matches facebook.com)
@@ -101,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T15:57:00.000Z
+Last session: 2026-03-23T15:57:54.537Z
 Stopped at: Completed 02-01-PLAN.md
 Resume file: None

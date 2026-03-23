@@ -18,12 +18,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Dashboard & Monitoring
 
-- [ ] **DASH-01**: Per-device data usage tracked in near-real-time (bytes per MAC address, ~5s intervals, persisted to SQLite)
-- [ ] **DASH-02**: Web dashboard displays top domains by bytes consumed, per-device breakdown, and category pie chart
-- [ ] **DASH-03**: Dashboard shows real-time bandwidth graph of current throughput
-- [ ] **DASH-04**: Captive portal intercepts first HTTP request from new devices, shows terms acceptance, and links to dashboard
-- [ ] **DASH-05**: Dashboard displays bandwidth savings as dollar amount based on Starlink overage rate
-- [ ] **DASH-06**: User can configure Starlink plan cap and billing cycle; dashboard shows usage against cap with alerts at 50%, 75%, 90%
+- [x] **DASH-01**: Per-device data usage tracked in near-real-time (bytes per MAC address, ~5s intervals, persisted to SQLite)
+- [x] **DASH-02**: Web dashboard displays top domains by bytes consumed, per-device breakdown, and category pie chart
+- [x] **DASH-03**: Dashboard shows real-time bandwidth graph of current throughput
+- [x] **DASH-04**: Captive portal intercepts first HTTP request from new devices, shows terms acceptance, and links to dashboard
+- [x] **DASH-05**: Dashboard displays bandwidth savings as dollar amount based on Starlink overage rate
+- [x] **DASH-06**: User can configure Starlink plan cap and billing cycle; dashboard shows usage against cap with alerts at 50%, 75%, 90%
 
 ### Traffic Routing
 
@@ -113,12 +113,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NET-01 | Phase 1 | Complete |
 | NET-02 | Phase 1 | Complete |
 | DNS-01 | Phase 1 | Complete |
-| DASH-01 | Phase 2 | Pending |
-| DASH-02 | Phase 2 | Pending |
-| DASH-03 | Phase 2 | Pending |
-| DASH-04 | Phase 2 | Pending |
-| DASH-05 | Phase 2 | Pending |
-| DASH-06 | Phase 2 | Pending |
+| DASH-01 | Phase 2 | Complete |
+| DASH-02 | Phase 2 | Complete |
+| DASH-03 | Phase 2 | Complete |
+| DASH-04 | Phase 2 | Complete |
+| DASH-05 | Phase 2 | Complete |
+| DASH-06 | Phase 2 | Complete |
 | ROUTE-01 | Phase 1 | Complete |
 | ROUTE-02 | Phase 3 | Pending |
 | QOS-01 | Phase 1 | Complete |
