@@ -9,3 +9,8 @@ func AcceptDevice(mac, ip string) error {
 	log.Printf("INFO: captive stub -- would accept device MAC=%s IP=%s", mac, ip)
 	return nil
 }
+
+// lookupARPTable returns empty string on non-Linux platforms (no /proc/net/arp).
+func lookupARPTable(ip string) string {
+	return ""
+}
