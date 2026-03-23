@@ -1,0 +1,17 @@
+[Unit]
+Description=SkyGate CAKE Autorate for Starlink
+Documentation=https://github.com/quartermint/skygate
+After=network-online.target nftables.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/opt/skygate/autorate.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=skygate-autorate
+
+[Install]
+WantedBy=multi-user.target
