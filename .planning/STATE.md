@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase complete — ready for verification
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-23T15:08:02.805Z"
+stopped_at: Phase 5 context gathered
+last_updated: "2026-03-23T15:15:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 0
@@ -75,6 +75,15 @@ Recent decisions affecting current work:
 - [Phase 01]: OverlayFS enabled manually after Ansible deploy (not automated) to prevent bricking during setup
 - [Phase 01]: Data partition uses ext4 with data=journal for crash-safe writes on /data
 - [Phase 01]: First-boot uses serial console TTY input -- simpler than web UI, works before AP is configured
+- [Phase 05]: "Quick Connect" is the default mode -- zero friction DNS-only for passengers who just tap Continue
+- [Phase 05]: Per-device mode selection tracked by MAC address in nftables sets
+- [Phase 05]: Per-appliance unique CA keypair generated on first boot, stored at /data/skygate/ca/ (0600, root only)
+- [Phase 05]: iOS cert install via .mobileconfig profile; Android via direct .crt download
+- [Phase 05]: Hardcoded never-MITM categories: banking, auth, gov, health, payments -- cannot be removed by user
+- [Phase 05]: Intermediate CA delegated to remote proxy for leaf cert signing (root CA key never leaves Pi)
+- [Phase 05]: Cert-pinning bypass uses nftables set + proxy TCP passthrough (traffic still routes through WireGuard)
+- [Phase 05]: YAML config + dashboard UI for bypass list management (consistent with Phase 1 pattern)
+- [Phase 05]: Post-flight cert removal instructions via dashboard + physical QR card
 
 ### Pending Todos
 
@@ -88,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T15:08:02.796Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-tunnel-infrastructure/03-CONTEXT.md
+Last session: 2026-03-23T15:15:00.000Z
+Stopped at: Phase 5 context gathered
+Resume file: .planning/phases/05-certificate-management/05-CONTEXT.md
