@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Pi Network Foundation** - WiFi AP with DNS blocking, aviation bypass, QoS, and read-only root filesystem *(2026-03-23)*
 - [x] **Phase 2: Usage Dashboard** - Per-device usage tracking, captive portal, bandwidth savings display -- the "whoa" moment *(2026-03-23)*
 - [x] **Phase 3: Tunnel Infrastructure** - WireGuard tunnel to remote server with policy-based routing *(2026-03-23)*
-- [ ] **Phase 4: Content Compression Proxy** - Go-based MITM proxy on remote server for image transcoding and JS/CSS minification
+- [x] **Phase 4: Content Compression Proxy** - Go-based MITM proxy on remote server for image transcoding and JS/CSS minification *(2026-03-23)*
 - [ ] **Phase 5: Certificate Management** - CA cert distribution, two-tier UX ("Quick Connect" vs "Max Savings"), cert-pinning bypass
 
 ## Phase Details
@@ -85,7 +85,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md -- Proxy foundation: YAML config loader, CA cert generation, SQLite compression logging
 - [x] 04-02-PLAN.md -- Compression pipeline: image transcoder (WebP), text minifier (JS/CSS/HTML), Content-Type handler dispatch
-- [ ] 04-03-PLAN.md -- Server wiring: goproxy MITM setup, main entry point, Dockerfile, Docker Compose, Makefile
+- [x] 04-03-PLAN.md -- Server wiring: goproxy MITM setup, main entry point, Dockerfile, Docker Compose, Makefile
 
 ### Phase 5: Certificate Management
 **Goal**: Passengers choose their savings level -- "Quick Connect" for zero-friction DNS blocking or "Max Savings" with CA cert install for full proxy compression -- and cert-pinned apps never break
@@ -108,5 +108,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Pi Network Foundation | 5/5 | Complete | 2026-03-23 |
 | 2. Usage Dashboard | 4/4 | Complete | 2026-03-23 |
 | 3. Tunnel Infrastructure | 3/3 | Complete | 2026-03-23 |
-| 4. Content Compression Proxy | 1/3 | In Progress|  |
+| 4. Content Compression Proxy | 3/3 | Complete | 2026-03-23 |
 | 5. Certificate Management | 0/TBD | Not started | - |
