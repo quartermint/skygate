@@ -83,8 +83,8 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 04-01-PLAN.md -- Proxy foundation: YAML config loader, CA cert generation, SQLite compression logging
-- [ ] 04-02-PLAN.md -- Compression pipeline: image transcoder (WebP), text minifier (JS/CSS/HTML), Content-Type handler dispatch
+- [x] 04-01-PLAN.md -- Proxy foundation: YAML config loader, CA cert generation, SQLite compression logging
+- [x] 04-02-PLAN.md -- Compression pipeline: image transcoder (WebP), text minifier (JS/CSS/HTML), Content-Type handler dispatch
 - [ ] 04-03-PLAN.md -- Server wiring: goproxy MITM setup, main entry point, Dockerfile, Docker Compose, Makefile
 
 ### Phase 5: Certificate Management
@@ -108,5 +108,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Pi Network Foundation | 5/5 | Complete | 2026-03-23 |
 | 2. Usage Dashboard | 4/4 | Complete | 2026-03-23 |
 | 3. Tunnel Infrastructure | 3/3 | Complete | 2026-03-23 |
-| 4. Content Compression Proxy | 0/3 | In Progress | - |
+| 4. Content Compression Proxy | 1/3 | In Progress|  |
 | 5. Certificate Management | 0/TBD | Not started | - |

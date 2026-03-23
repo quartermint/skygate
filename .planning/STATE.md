@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-03-23T23:01:25.840Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-23T23:47:43.349Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 15
 ---
 
 # Project State
@@ -19,11 +19,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-22)
 
 **Core value:** Show pilots what's eating their data, then give them the controls to stop it.
-**Current focus:** Phase 01 — pi-network-foundation
+**Current focus:** Phase 04 — content-compression-proxy
 
 ## Current Position
 
-Phase: 02
+Phase: 05
 Plan: Not started
 
 ## Performance Metrics
@@ -59,6 +59,9 @@ Plan: Not started
 | Phase 03 P02 | 5 | 2 tasks | 11 files |
 | Phase 03 P03 | 6 | 2 tasks | 6 files |
 | Phase 01 P05 | 2 | 2 tasks | 7 files |
+| Phase 04 P01 | 5 | 2 tasks | 8 files |
+| Phase 04 P02 | 7 | 2 tasks | 8 files |
+| Phase 04 P03 | 11 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -117,6 +120,15 @@ Recent decisions affecting current work:
 - [Phase 01]: OverlayFS enabled manually after Ansible deploy (not automated) to prevent bricking during setup
 - [Phase 01]: Data partition uses ext4 with data=journal for crash-safe writes on /data
 - [Phase 01]: First-boot uses serial console TTY input -- simpler than web UI, works before AP is configured
+- [Phase 04]: No hidden defaults in config parser -- empty YAML returns zero-value Config
+- [Phase 04]: ECDSA P-256 for CA cert key -- smaller, faster than RSA, adequate for MITM leaf signing
+- [Phase 04]: CA generation distinguishes missing files (generate new) from corrupt files (return error)
+- [Phase 04]: Minifier returns original on error for graceful degradation in proxy pipeline
+- [Phase 04]: Brotli decompression deferred to v2 -- gzip only in v1, logged warning for br
+- [Phase 04]: Programmatic test images (makeJPEG/makePNG) instead of fixture files for proxy transcoder tests
+- [Phase 04]: goproxy.CertStorage uses Fetch(host, gen) pattern -- gen() called on cache miss, not separate Store method
+- [Phase 04]: Proxy ports mapped on wireguard container per Docker network_mode: service:wireguard constraint
+- [Phase 04]: build target remains Pi-only (CGO_ENABLED=0); build-all includes proxy (CGO_ENABLED=1)
 
 ### Pending Todos
 
@@ -130,6 +142,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T22:52:33.179Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-03-23T23:41:09.313Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
