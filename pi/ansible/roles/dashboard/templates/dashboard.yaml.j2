@@ -1,0 +1,10 @@
+# Managed by Ansible - SkyGate Dashboard Config
+# Do NOT edit manually on the Pi
+
+port: {{ dashboard_port }}
+poll_interval_sec: {{ dashboard_poll_interval_sec }}
+pihole_address: "{{ pihole_address }}"
+pihole_password: "{{ pihole_password }}"
+db_path: "{{ dashboard_db_path }}"
+categories_file: "{{ dashboard_categories_file }}"
+static_dir: "{{ dashboard_static_dir }}"

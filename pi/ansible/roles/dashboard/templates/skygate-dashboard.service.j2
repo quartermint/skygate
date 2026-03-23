@@ -1,0 +1,25 @@
+[Unit]
+Description=SkyGate Dashboard Daemon
+Documentation=https://github.com/quartermint/skygate
+After=network-online.target nftables.service pihole-FTL.service
+Wants=network-online.target pihole-FTL.service
+Requires=nftables.service
+
+[Service]
+Type=simple
+ExecStart={{ skygate_opt_dir }}/skygate-dashboard -config {{ skygate_config_dir }}/dashboard.yaml
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=skygate-dashboard
+
+# Security hardening
+NoNewPrivileges=false
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ skygate_data_dir }}
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
