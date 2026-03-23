@@ -1,6 +1,7 @@
-# SkyGate Remote Server - WireGuard Endpoint
-# Phase 3: WireGuard only
-# Phase 4: Add content proxy service
+# SkyGate Remote Server - WireGuard + Content Compression Proxy
+# Usage: docker compose up -d
+# Phase 3: WireGuard tunnel endpoint
+# Phase 4: Content compression proxy (MITM + image transcoding + minification)
 
 services:
   wireguard:
@@ -25,13 +26,28 @@ services:
       - /lib/modules:/lib/modules
     ports:
       - "${SERVERPORT:-51820}:51820/udp"
+      - "8443:8443"    # Proxy HTTPS listen port (exposed via WG container per network_mode pattern)
+      - "8080:8080"    # CA cert download + health endpoint
     sysctls:
       - net.ipv4.conf.all.src_valid_mark=1
     restart: unless-stopped
 
-  # Phase 4: Content proxy will be added here
-  # proxy:
-  #   build: ./proxy
-  #   network_mode: "service:wireguard"
-  #   depends_on:
-  #     - wireguard
+  proxy:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile.proxy
+    container_name: skygate-proxy
+    network_mode: "service:wireguard"
+    depends_on:
+      - wireguard
+    volumes:
+      - proxy-data:/data/skygate
+      - ./proxy-config.yaml:/etc/skygate/proxy.yaml:ro
+      - ./bypass-domains.yaml:/etc/skygate/bypass-domains.yaml:ro
+    environment:
+      - SKYGATE_CONFIG=/etc/skygate/proxy.yaml
+    restart: unless-stopped
+
+volumes:
+  proxy-data:
+    driver: local
