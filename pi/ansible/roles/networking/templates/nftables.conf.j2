@@ -1,5 +1,5 @@
 #!/usr/sbin/nft -f
-# Managed by Ansible - SkyGate Phase 1 nftables
+# Managed by Ansible - SkyGate nftables
 # Do NOT edit manually on the Pi
 
 flush ruleset
@@ -28,8 +28,13 @@ table inet skygate {
         iifname "{{ ap_interface }}" udp dport 53 accept
         iifname "{{ ap_interface }}" tcp dport 53 accept
 
-        # Allow HTTP/HTTPS on AP interface (for Pi-hole admin + future dashboard)
+        # Allow HTTP/HTTPS on AP interface (dashboard + captive portal)
         iifname "{{ ap_interface }}" tcp dport { 80, 443 } accept
+
+{% if wg_enabled | default(false) %}
+        # Allow WireGuard on uplink (return traffic from server)
+        iifname "{{ uplink_interface }}" udp dport {{ wg_listen_port | default(51820) }} accept
+{% endif %}
 
         # Allow SSH (development only)
         tcp dport 22 accept
@@ -41,8 +46,13 @@ table inet skygate {
     chain forward {
         type filter hook forward priority filter; policy drop;
 
-        # Allow forwarding from AP to Starlink
+        # Allow forwarding from AP to Starlink (bypass + direct traffic)
         iifname "{{ ap_interface }}" oifname "{{ uplink_interface }}" accept
+
+{% if wg_enabled | default(false) %}
+        # Allow forwarding from AP to WireGuard tunnel (tunnel traffic)
+        iifname "{{ ap_interface }}" oifname "wg0" accept
+{% endif %}
 
         # Allow established/related return traffic
         ct state established,related accept
@@ -59,8 +69,14 @@ table inet skygate {
         ip daddr @bypass_v4 meta mark set 0x1
         ip daddr @bypass_v4 ct mark set meta mark
 
+{% if wg_enabled | default(false) %}
+        # Tunnel: non-bypass AP traffic via WireGuard (fwmark 0x2)
+        iifname "{{ ap_interface }}" ip daddr != @bypass_v4 meta mark set 0x2
+        iifname "{{ ap_interface }}" ip daddr != @bypass_v4 ct mark set meta mark
+{% endif %}
+
         # Restore marks for existing connections
-        ct mark 0x1 meta mark set ct mark
+        ct mark != 0x0 meta mark set ct mark
     }
 
     chain postrouting {
@@ -68,5 +84,10 @@ table inet skygate {
 
         # NAT from AP to Starlink
         oifname "{{ uplink_interface }}" masquerade
+
+{% if wg_enabled | default(false) %}
+        # MSS clamping for tunnel traffic (prevent MTU-related silent packet loss)
+        oifname "wg0" tcp flags syn tcp option maxseg size set 1380
+{% endif %}
     }
 }
