@@ -33,9 +33,9 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md -- Project scaffolding: Go module, Ansible skeleton, config files, Makefile, test infrastructure
-- [ ] 01-02-PLAN.md -- WiFi AP + Pi-hole: hostapd, DHCP/DNS, DNS ad/tracker blocking, aviation whitelisting
-- [ ] 01-03-PLAN.md -- Aviation bypass: Go bypass daemon, nftables sets, policy routing, Ansible routing role
+- [x] 01-01-PLAN.md -- Project scaffolding: Go module, Ansible skeleton, config files, Makefile, test infrastructure
+- [x] 01-02-PLAN.md -- WiFi AP + Pi-hole: hostapd, DHCP/DNS, DNS ad/tracker blocking, aviation whitelisting
+- [x] 01-03-PLAN.md -- Aviation bypass: Go bypass daemon, nftables sets, policy routing, Ansible routing role
 - [ ] 01-04-PLAN.md -- QoS: CAKE autorate script, BATS tests, Ansible QoS role
 - [ ] 01-05-PLAN.md -- Read-only filesystem: OverlayFS, data partition, first-boot setup, final review
 
