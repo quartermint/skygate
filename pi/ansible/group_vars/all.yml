@@ -41,3 +41,28 @@ dashboard_static_dir: "{{ skygate_opt_dir }}/static"
 pihole_address: "http://localhost:8080"
 pihole_password: ""
 caddy_port: 80
+
+# WireGuard tunnel (Phase 3)
+wg_enabled: false
+wg_interface: wg0
+wg_listen_port: 51820
+wg_client_address: "10.13.13.2"
+wg_subnet_mask: "24"
+wg_mtu: 1420
+wg_keepalive: 25
+wg_server_public_key: "PLACEHOLDER"
+wg_server_endpoint: "PLACEHOLDER"
+wg_server_port: 51820
+wg_private_key: "PLACEHOLDER"
+
+# Tunnel monitor
+tunnel_monitor_check_interval_s: 5
+tunnel_monitor_handshake_timeout_s: 180
+tunnel_monitor_recovery_threshold_s: 30
+tunnel_monitor_fail_count: 3
+tunnel_monitor_recover_count: 3
+
+# CAKE on WireGuard (Phase 3)
+wg_cake_base_rate_kbps: 15000
+wg_cake_min_rate_kbps: 3000
+wg_cake_max_rate_kbps: 80000

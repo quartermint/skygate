@@ -1,0 +1,37 @@
+# SkyGate Remote Server - WireGuard Endpoint
+# Phase 3: WireGuard only
+# Phase 4: Add content proxy service
+
+services:
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: skygate-wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ:-Etc/UTC}
+      - SERVERURL=${SERVERURL:?Set SERVERURL to server public IP or domain}
+      - SERVERPORT=${SERVERPORT:-51820}
+      - PEERS=${PEERS:-skygate-pi}
+      - INTERNAL_SUBNET=${INTERNAL_SUBNET:-10.13.13.0}
+      - ALLOWEDIPS=0.0.0.0/0
+      - PERSISTENTKEEPALIVE_PEERS=all
+      - LOG_CONFS=true
+    volumes:
+      - ./wireguard-config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - "${SERVERPORT:-51820}:51820/udp"
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+
+  # Phase 4: Content proxy will be added here
+  # proxy:
+  #   build: ./proxy
+  #   network_mode: "service:wireguard"
+  #   depends_on:
+  #     - wireguard

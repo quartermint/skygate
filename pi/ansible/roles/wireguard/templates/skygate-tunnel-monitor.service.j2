@@ -1,0 +1,27 @@
+# Managed by Ansible - SkyGate
+[Unit]
+Description=SkyGate Tunnel Health Monitor
+Documentation=https://github.com/quartermint/skygate
+After=network-online.target nftables.service wg-quick@wg0.service
+Wants=network-online.target
+Requires=nftables.service
+
+[Service]
+Type=simple
+ExecStart={{ skygate_opt_dir }}/skygate-tunnel-monitor -config {{ skygate_config_dir }}/tunnel-monitor.yaml
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=skygate-tunnel-monitor
+
+# Security hardening (needs CAP_NET_ADMIN for ip rule manipulation)
+NoNewPrivileges=false
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths={{ skygate_data_dir }}
+PrivateTmp=true
+AmbientCapabilities=CAP_NET_ADMIN
+
+[Install]
+WantedBy=multi-user.target
