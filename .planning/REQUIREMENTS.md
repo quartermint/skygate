@@ -9,12 +9,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Networking
 
-- [ ] **NET-01**: Pi serves as WiFi access point with WPA2 that passengers connect to (hostapd + dnsmasq)
-- [ ] **NET-02**: Connected devices receive IP addresses via DHCP with DNS routed through Pi-hole
+- [x] **NET-01**: Pi serves as WiFi access point with WPA2 that passengers connect to (hostapd + dnsmasq)
+- [x] **NET-02**: Connected devices receive IP addresses via DHCP with DNS routed through Pi-hole
 
 ### DNS Filtering
 
-- [ ] **DNS-01**: Pi-hole blocks ads, trackers, and known malicious domains at DNS level with community blocklists
+- [x] **DNS-01**: Pi-hole blocks ads, trackers, and known malicious domains at DNS level with community blocklists
 
 ### Dashboard & Monitoring
 
@@ -27,12 +27,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Traffic Routing
 
-- [ ] **ROUTE-01**: Aviation apps (ForeFlight, Garmin Pilot, aviationweather.gov, ADS-B services) bypass proxy and route directly to Starlink via DNS-driven ipset
+- [x] **ROUTE-01**: Aviation apps (ForeFlight, Garmin Pilot, aviationweather.gov, ADS-B services) bypass proxy and route directly to Starlink via DNS-driven ipset
 - [ ] **ROUTE-02**: Policy-based routing via nftables sends non-bypass traffic through WireGuard tunnel to remote proxy
 
 ### Quality of Service
 
-- [ ] **QOS-01**: CAKE qdisc with cake-autorate dynamically adjusts bandwidth ceiling based on real-time latency, preventing Starlink bufferbloat
+- [x] **QOS-01**: CAKE qdisc with cake-autorate dynamically adjusts bandwidth ceiling based on real-time latency, preventing Starlink bufferbloat
 
 ### Tunnel Infrastructure
 
@@ -110,18 +110,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| NET-01 | Phase 1 | Pending |
-| NET-02 | Phase 1 | Pending |
-| DNS-01 | Phase 1 | Pending |
+| NET-01 | Phase 1 | Complete |
+| NET-02 | Phase 1 | Complete |
+| DNS-01 | Phase 1 | Complete |
 | DASH-01 | Phase 2 | Pending |
 | DASH-02 | Phase 2 | Pending |
 | DASH-03 | Phase 2 | Pending |
 | DASH-04 | Phase 2 | Pending |
 | DASH-05 | Phase 2 | Pending |
 | DASH-06 | Phase 2 | Pending |
-| ROUTE-01 | Phase 1 | Pending |
+| ROUTE-01 | Phase 1 | Complete |
 | ROUTE-02 | Phase 3 | Pending |
-| QOS-01 | Phase 1 | Pending |
+| QOS-01 | Phase 1 | Complete |
 | TUN-01 | Phase 3 | Pending |
 | PROXY-01 | Phase 4 | Pending |
 | PROXY-02 | Phase 4 | Pending |
