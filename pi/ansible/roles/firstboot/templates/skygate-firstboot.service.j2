@@ -1,0 +1,15 @@
+# Managed by Ansible - SkyGate
+[Unit]
+Description=SkyGate First Boot Setup
+After=network-online.target
+ConditionPathExists=!{{ skygate_data_dir }}/.firstboot-complete
+
+[Service]
+Type=oneshot
+ExecStart={{ skygate_opt_dir }}/firstboot.sh
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+
+[Install]
+WantedBy=multi-user.target

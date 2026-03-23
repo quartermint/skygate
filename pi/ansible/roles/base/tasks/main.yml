@@ -60,3 +60,102 @@
     path: "{{ skygate_config_dir }}"
     state: directory
     mode: "0755"
+
+# --- Data partition for persistent storage ---
+
+- name: Create data partition mount point
+  ansible.builtin.file:
+    path: /data
+    state: directory
+    mode: '0755'
+
+- name: Deploy fstab entry for data partition
+  ansible.builtin.template:
+    src: fstab-data.j2
+    dest: /etc/fstab.d/skygate-data.conf
+    mode: '0644'
+  # NOTE: On systems without fstab.d support, use lineinfile on /etc/fstab instead
+  ignore_errors: true
+
+- name: Add data partition to fstab (fallback)
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    regexp: '^/dev/mmcblk0p3'
+    line: '/dev/mmcblk0p3  /data  ext4  defaults,noatime,data=journal  0  2'
+    state: present
+
+- name: Mount data partition
+  ansible.posix.mount:
+    path: /data
+    src: /dev/mmcblk0p3
+    fstype: ext4
+    opts: defaults,noatime,data=journal
+    state: mounted
+
+- name: Create persistent data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /data/pihole
+    - /data/skygate
+    - /data/skygate/log
+
+- name: Create symlink for Pi-hole persistent data
+  ansible.builtin.file:
+    src: /data/pihole
+    dest: /etc/pihole
+    state: link
+    force: true
+  # Run BEFORE Pi-hole install (pihole role)
+  # If /etc/pihole already exists as directory, force symlink
+
+# --- Writable tmpfs mounts ---
+
+- name: Configure tmpfs mounts for volatile directories
+  ansible.posix.mount:
+    path: "{{ item.path }}"
+    src: tmpfs
+    fstype: tmpfs
+    opts: "{{ item.opts }}"
+    state: mounted
+  loop:
+    - { path: /tmp, opts: "defaults,noatime,nosuid,nodev" }
+    - { path: /var/tmp, opts: "defaults,noatime,nosuid,nodev" }
+    - { path: /var/log, opts: "defaults,noatime,nosuid,nodev,size=50m" }
+
+# --- OverlayFS (read-only root) ---
+# NOTE: OverlayFS should be enabled LAST, after all configuration is written.
+# The Ansible playbook must run with OverlayFS DISABLED during deployment.
+# Enable OverlayFS manually after verifying everything works:
+#   sudo raspi-config nonint do_overlayfs 0
+#   sudo raspi-config nonint do_boot_ro 0
+#   sudo reboot
+#
+# To disable for maintenance:
+#   sudo raspi-config nonint do_overlayfs 1
+#   sudo raspi-config nonint do_boot_ro 1
+#   sudo reboot
+
+- name: Document OverlayFS commands in /data/skygate/overlayfs-commands.txt
+  ansible.builtin.copy:
+    dest: /data/skygate/overlayfs-commands.txt
+    mode: '0644'
+    content: |
+      # SkyGate OverlayFS Management
+      # Enable read-only root (do this after verifying everything works):
+      sudo raspi-config nonint do_overlayfs 0
+      sudo raspi-config nonint do_boot_ro 0
+      sudo reboot
+
+      # Disable for maintenance/updates:
+      sudo raspi-config nonint do_overlayfs 1
+      sudo raspi-config nonint do_boot_ro 1
+      sudo reboot
+
+      # Check current status:
+      mount | grep "on / " | grep -o "ro\|rw"
+
+      # IMPORTANT: /data partition remains writable even with OverlayFS.
+      # All persistent data (Pi-hole gravity, config, logs) lives on /data.
