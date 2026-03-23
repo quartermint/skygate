@@ -1,0 +1,36 @@
+# SNI bypass list -- these domains skip MITM interception entirely.
+# Cert-pinned apps break if MITM'd. Keep this list generous.
+# Per Phase 5 decision: banking, auth, gov, health, payments are hardcoded never-MITM.
+bypass_domains:
+  # Banking & Financial
+  - "*.chase.com"
+  - "*.bankofamerica.com"
+  - "*.wellsfargo.com"
+  - "*.capitalone.com"
+  - "*.citi.com"
+  - "*.schwab.com"
+  - "*.fidelity.com"
+  - "*.vanguard.com"
+  - "*.usaa.com"
+  # Authentication & Identity
+  - "*.apple.com"
+  - "accounts.google.com"
+  - "login.microsoftonline.com"
+  - "*.okta.com"
+  - "*.auth0.com"
+  - "*.duosecurity.com"
+  # Payments
+  - "*.paypal.com"
+  - "*.venmo.com"
+  - "*.stripe.com"
+  - "*.square.com"
+  # Government
+  - "*.gov"
+  - "*.mil"
+  # Health
+  - "*.epic.com"
+  - "*.myChart.com"
+  # Aviation (already bypass at DNS level, belt-and-suspenders)
+  - "*.foreflight.com"
+  - "*.garmin.com"
+  - "*.faa.gov"

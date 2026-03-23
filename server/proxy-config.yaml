@@ -1,0 +1,26 @@
+listen_addr: ":8443"
+ca_cert_path: /data/skygate/ca.crt
+ca_key_path: /data/skygate/ca.key
+ca_download_addr: ":8080"
+db_path: /data/skygate/proxy.db
+bypass_domains_file: /etc/skygate/bypass-domains.yaml
+verbose: false
+
+image:
+  quality: 30
+  max_width: 800
+  timeout_ms: 500
+  max_size_bytes: 10485760
+  concurrent_limit: 4
+
+minify:
+  enabled: true
+  html: true
+  css: true
+  js: true
+  svg: true
+  json: true
+
+log:
+  retention_days: 30
+  batch_interval_s: 10
