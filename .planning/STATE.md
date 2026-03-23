@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 02-01-PLAN.md
-last_updated: "2026-03-23T15:57:54.540Z"
+status: Ready to plan
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-03-23T16:29:41.536Z"
 progress:
   total_phases: 5
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 9
-  completed_plans: 4
+  completed_plans: 8
 ---
 
 # Project State
@@ -23,8 +23,8 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 
 ## Current Position
 
-Phase: 02 (usage-dashboard) — EXECUTING
-Plan: 3 of 4
+Phase: 03
+Plan: Not started
 
 ## Performance Metrics
 
@@ -53,6 +53,8 @@ Plan: 3 of 4
 | Phase 01 P05 | 3 | 2 tasks | 7 files |
 | Phase 02 P02 | 3 | 2 tasks | 7 files |
 | Phase 02 P01 | 9 | 2 tasks | 18 files |
+| Phase 02 P03 | 8 | 3 tasks | 13 files |
+| Phase 02 P04 | 3 | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -92,6 +94,12 @@ Recent decisions affecting current work:
 - [Phase 02]: modernc.org/sqlite chosen over mattn/go-sqlite3 for CGO_ENABLED=0 cross-compilation compatibility
 - [Phase 02]: Nanosecond timestamps for device_usage to avoid UNIQUE constraint collisions at high write rates
 - [Phase 02]: Subdomain matching via domain-label walking for category lookup (m.facebook.com matches facebook.com)
+- [Phase 02]: Server struct holds shared state across handlers (config, db, categories, pihole, counters)
+- [Phase 02]: stdlib SSE via net/http Flusher -- no r3labs/sse dependency needed
+- [Phase 02]: Conservative savings: 150KB/ad, 5KB/tracker payload heuristics for pilot trust
+- [Phase 02]: Caddy host-header matching for CNA check URL interception -- DNAT preserves Host, @captive_check matcher triggers on known CNA domains
+- [Phase 02]: nftables allowed_macs set with 24h timeout for captive portal session management
+- [Phase 02]: Multi-daemon Makefile pattern: per-daemon build/cross-build targets with aggregate targets
 
 ### Pending Todos
 
@@ -105,6 +113,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T15:57:54.537Z
-Stopped at: Completed 02-01-PLAN.md
+Last session: 2026-03-23T16:19:54.362Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None

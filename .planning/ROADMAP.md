@@ -52,9 +52,9 @@ Plans:
 **Plans**: 4 plans
 
 Plans:
-- [ ] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
-- [ ] 02-02-PLAN.md -- Dashboard frontend: HTMX/Chart.js static assets, HTML pages, mobile-first CSS
-- [ ] 02-03-PLAN.md -- API + business logic: Pi-hole client, savings calculator, SSE streaming, REST endpoints, captive portal handler
+- [x] 02-01-PLAN.md -- Go daemon foundation: config, SQLite DB layer, nftables counter parser, domain categories
+- [x] 02-02-PLAN.md -- Dashboard frontend: HTMX/Chart.js static assets, HTML pages, mobile-first CSS
+- [x] 02-03-PLAN.md -- API + business logic: Pi-hole client, savings calculator, SSE streaming, REST endpoints, captive portal handler
 - [ ] 02-04-PLAN.md -- Deployment: Ansible dashboard role, Caddy config, nftables captive portal rules, systemd service, Makefile updates
 
 ### Phase 3: Tunnel Infrastructure
