@@ -16,6 +16,11 @@ DECREASE_FACTOR="${DECREASE_FACTOR:-{{ cake_decrease_factor }}}"
 STABLE_THRESHOLD="${STABLE_THRESHOLD:-{{ cake_stable_threshold }}}"
 INTERVAL_S="${INTERVAL_S:-{{ autorate_interval_s }}}"
 
+# WireGuard tunnel CAKE (static bandwidth, no autorate)
+WG_ENABLED="${WG_ENABLED:-{{ wg_enabled | default(false) | lower }}}"
+WG_INTERFACE="${WG_INTERFACE:-{{ wg_interface | default('wg0') }}}"
+WG_CAKE_RATE_KBPS="${WG_CAKE_RATE_KBPS:-{{ wg_cake_base_rate_kbps | default(15000) }}}"
+
 CURRENT_RATE="$BASE_RATE_KBPS"
 STABLE_COUNT=0
 DRY_RUN="${DRY_RUN:-false}"
@@ -66,11 +71,26 @@ apply_cake() {
     tc qdisc replace dev "$INTERFACE" root cake bandwidth "${rate_kbps}kbit"
 }
 
+apply_wg_cake() {
+    local rate_kbps="$1"
+    if [ "$DRY_RUN" = true ]; then
+        echo "DRY_RUN: tc qdisc change dev $WG_INTERFACE root cake bandwidth ${rate_kbps}kbit"
+        return 0
+    fi
+    tc qdisc change dev "$WG_INTERFACE" root cake bandwidth "${rate_kbps}kbit" 2>/dev/null || \
+    tc qdisc replace dev "$WG_INTERFACE" root cake bandwidth "${rate_kbps}kbit"
+}
+
 main() {
     echo "[autorate] Starting SkyGate CAKE autorate on $INTERFACE"
     echo "[autorate] Rate range: ${MIN_RATE_KBPS}-${MAX_RATE_KBPS} kbps, baseline RTT: ${BASELINE_RTT_MS}ms"
     apply_cake "$CURRENT_RATE"
     echo "[autorate] Initial CAKE bandwidth: ${CURRENT_RATE}kbit"
+
+    if [ "$WG_ENABLED" = "true" ]; then
+        apply_wg_cake "$WG_CAKE_RATE_KBPS"
+        echo "[autorate] WireGuard CAKE bandwidth: ${WG_CAKE_RATE_KBPS}kbit (static)"
+    fi
 
     while true; do
         local rtt

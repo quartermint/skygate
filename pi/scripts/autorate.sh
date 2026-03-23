@@ -26,6 +26,11 @@ DECREASE_FACTOR="${DECREASE_FACTOR:-0.7}"
 STABLE_THRESHOLD="${STABLE_THRESHOLD:-5}"
 INTERVAL_S="${INTERVAL_S:-2}"
 
+# WireGuard tunnel CAKE (static bandwidth, no autorate)
+WG_ENABLED="${WG_ENABLED:-false}"
+WG_INTERFACE="${WG_INTERFACE:-wg0}"
+WG_CAKE_RATE_KBPS="${WG_CAKE_RATE_KBPS:-15000}"
+
 # Internal state
 CURRENT_RATE="$BASE_RATE_KBPS"
 STABLE_COUNT=0
@@ -88,6 +93,17 @@ apply_cake() {
     tc qdisc replace dev "$INTERFACE" root cake bandwidth "${rate_kbps}kbit"
 }
 
+# Apply CAKE bandwidth on WireGuard interface (static, no autorate).
+apply_wg_cake() {
+    local rate_kbps="$1"
+    if [ "$DRY_RUN" = true ]; then
+        echo "DRY_RUN: tc qdisc change dev $WG_INTERFACE root cake bandwidth ${rate_kbps}kbit"
+        return 0
+    fi
+    tc qdisc change dev "$WG_INTERFACE" root cake bandwidth "${rate_kbps}kbit" 2>/dev/null || \
+    tc qdisc replace dev "$WG_INTERFACE" root cake bandwidth "${rate_kbps}kbit"
+}
+
 # --- Main loop ---
 
 main() {
@@ -97,6 +113,11 @@ main() {
     # Initialize CAKE
     apply_cake "$CURRENT_RATE"
     echo "[autorate] Initial CAKE bandwidth: ${CURRENT_RATE}kbit"
+
+    if [ "$WG_ENABLED" = "true" ]; then
+        apply_wg_cake "$WG_CAKE_RATE_KBPS"
+        echo "[autorate] WireGuard CAKE bandwidth: ${WG_CAKE_RATE_KBPS}kbit (static)"
+    fi
 
     while true; do
         local rtt
