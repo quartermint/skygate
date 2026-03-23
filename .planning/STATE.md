@@ -2,9 +2,9 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Phase 2 context gathered
-last_updated: "2026-03-23T14:46:24.166Z"
+status: Phase complete — ready for verification
+stopped_at: Phase 4 context gathered
+last_updated: "2026-03-23T15:06:58.230Z"
 progress:
   total_phases: 5
   completed_phases: 0
@@ -50,6 +50,7 @@ Plan: 5 of 5
 | Phase 01 P02 | 4min | 2 tasks | 13 files |
 | Phase 01 P03 | 7min | 2 tasks | 13 files |
 | Phase 01 P04 | 6min | 2 tasks | 7 files |
+| Phase 01 P05 | 3 | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Recent decisions affecting current work:
 - [Phase 01]: systemd service pattern: After nftables.service, Restart=always, ProtectSystem=strict for daemon deployment
 - [Phase 01]: DRY_RUN made environment-overridable for BATS test compatibility
 - [Phase 01]: Autorate script uses BASH_SOURCE guard for sourceable testing without running main loop
+- [Phase 01]: OverlayFS enabled manually after Ansible deploy (not automated) to prevent bricking during setup
+- [Phase 01]: Data partition uses ext4 with data=journal for crash-safe writes on /data
+- [Phase 01]: First-boot uses serial console TTY input -- simpler than web UI, works before AP is configured
 
 ### Pending Todos
 
@@ -84,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23T14:46:24.164Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-usage-dashboard/02-CONTEXT.md
+Last session: 2026-03-23T15:06:58.222Z
+Stopped at: Phase 4 context gathered
+Resume file: .planning/phases/04-content-compression-proxy/04-CONTEXT.md
