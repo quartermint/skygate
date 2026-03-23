@@ -1,9 +1,10 @@
-.PHONY: build test test-go test-bats lint lint-ansible deploy clean cross-build help
+.PHONY: build build-bypass build-dashboard test test-go test-bats lint lint-ansible deploy deploy-check clean cross-build cross-build-bypass cross-build-dashboard help
 
 # Go settings
 GOOS ?= linux
 GOARCH ?= arm64
 BINARY_NAME = skygate-bypass
+DASHBOARD_BINARY = skygate-dashboard
 
 # Ansible settings
 ANSIBLE_DIR = pi/ansible
@@ -11,11 +12,21 @@ PI_HOST ?= skygate
 
 ## Build
 
-build: ## Build bypass daemon for current platform
+build: build-bypass build-dashboard ## Build all daemons for current platform
+
+build-bypass: ## Build bypass daemon for current platform
 	go build -o bin/$(BINARY_NAME) ./cmd/bypass-daemon/
 
-cross-build: ## Cross-compile bypass daemon for Pi (linux/arm64)
+build-dashboard: ## Build dashboard daemon for current platform
+	go build -o bin/$(DASHBOARD_BINARY) ./cmd/dashboard-daemon/
+
+cross-build: cross-build-bypass cross-build-dashboard ## Cross-compile all daemons for Pi (linux/arm64)
+
+cross-build-bypass: ## Cross-compile bypass daemon for Pi
 	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -o bin/$(BINARY_NAME)-$(GOOS)-$(GOARCH) ./cmd/bypass-daemon/
+
+cross-build-dashboard: ## Cross-compile dashboard daemon for Pi
+	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -o bin/$(DASHBOARD_BINARY)-$(GOOS)-$(GOARCH) ./cmd/dashboard-daemon/
 
 ## Test
 
