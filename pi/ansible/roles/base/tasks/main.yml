@@ -1,4 +1,62 @@
 ---
-- name: Base role placeholder
-  ansible.builtin.debug:
-    msg: "Base role not yet implemented"
+# Base OS configuration for SkyGate appliance
+# Installs required packages, enables IP forwarding, creates data directories
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name:
+      - iproute2
+      - nftables
+      - fping
+      - conntrack
+      - jq
+      - curl
+      - ca-certificates
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/99-skygate.conf
+  notify: reload sysctl
+
+- name: Disable IPv6 (all interfaces)
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.disable_ipv6
+    value: "1"
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/99-skygate.conf
+  notify: reload sysctl
+
+- name: Disable IPv6 (default)
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.default.disable_ipv6
+    value: "1"
+    state: present
+    reload: true
+    sysctl_file: /etc/sysctl.d/99-skygate.conf
+  notify: reload sysctl
+
+- name: Create SkyGate data directory
+  ansible.builtin.file:
+    path: "{{ skygate_data_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Create SkyGate opt directory
+  ansible.builtin.file:
+    path: "{{ skygate_opt_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Create SkyGate config directory
+  ansible.builtin.file:
+    path: "{{ skygate_config_dir }}"
+    state: directory
+    mode: "0755"

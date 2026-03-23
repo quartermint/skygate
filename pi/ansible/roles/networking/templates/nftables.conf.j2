@@ -1,0 +1,72 @@
+#!/usr/sbin/nft -f
+# Managed by Ansible - SkyGate Phase 1 nftables
+# Do NOT edit manually on the Pi
+
+flush ruleset
+
+table inet skygate {
+    # Aviation bypass IP set (populated by Go bypass daemon)
+    set bypass_v4 {
+        type ipv4_addr
+        flags timeout
+        timeout 1h
+    }
+
+    chain input {
+        type filter hook input priority filter; policy drop;
+
+        # Allow established/related
+        ct state established,related accept
+
+        # Allow loopback
+        iif "lo" accept
+
+        # Allow DHCP on AP interface
+        iifname "{{ ap_interface }}" udp dport 67 accept
+
+        # Allow DNS on AP interface (to Pi-hole)
+        iifname "{{ ap_interface }}" udp dport 53 accept
+        iifname "{{ ap_interface }}" tcp dport 53 accept
+
+        # Allow HTTP/HTTPS on AP interface (for Pi-hole admin + future dashboard)
+        iifname "{{ ap_interface }}" tcp dport { 80, 443 } accept
+
+        # Allow SSH (development only)
+        tcp dport 22 accept
+
+        # Allow ICMP
+        ip protocol icmp accept
+    }
+
+    chain forward {
+        type filter hook forward priority filter; policy drop;
+
+        # Allow forwarding from AP to Starlink
+        iifname "{{ ap_interface }}" oifname "{{ uplink_interface }}" accept
+
+        # Allow established/related return traffic
+        ct state established,related accept
+
+        # Per-interface byte counters (for Phase 2 monitoring)
+        iifname "{{ ap_interface }}" counter
+        oifname "{{ ap_interface }}" counter
+    }
+
+    chain prerouting {
+        type filter hook prerouting priority mangle;
+
+        # Aviation bypass: direct routing via Starlink (fwmark 0x1)
+        ip daddr @bypass_v4 meta mark set 0x1
+        ip daddr @bypass_v4 ct mark set meta mark
+
+        # Restore marks for existing connections
+        ct mark 0x1 meta mark set ct mark
+    }
+
+    chain postrouting {
+        type nat hook postrouting priority srcnat;
+
+        # NAT from AP to Starlink
+        oifname "{{ uplink_interface }}" masquerade
+    }
+}
