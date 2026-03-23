@@ -1,0 +1,14 @@
+[Unit]
+Description=SkyGate First Boot Setup
+After=network-online.target
+ConditionPathExists=!/data/skygate/.firstboot-complete
+
+[Service]
+Type=oneshot
+ExecStart=/opt/skygate/firstboot.sh
+StandardInput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+
+[Install]
+WantedBy=multi-user.target
