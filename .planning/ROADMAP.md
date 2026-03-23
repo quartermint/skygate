@@ -65,7 +65,12 @@ Plans:
   1. WireGuard tunnel establishes automatically on boot and maintains connection through Starlink satellite handoffs
   2. Non-bypass web traffic routes through the tunnel to the remote server while aviation app traffic goes direct to Starlink
   3. If the tunnel drops, traffic falls back to direct routing and the tunnel auto-reconnects without manual intervention
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 03-01-PLAN.md -- WireGuard plumbing: server Docker Compose, Pi Ansible wireguard role, nftables tunnel marking, policy routing
+- [ ] 03-02-PLAN.md -- Tunnel monitor daemon: Go health check, state machine with hysteresis, routing fallback
+- [ ] 03-03-PLAN.md -- Integration wiring: Makefile targets, playbook role inclusion, QoS on wg0, BATS tests
 
 ### Phase 4: Content Compression Proxy
 **Goal**: A remote proxy server compresses web content (images, JS, CSS) before it traverses the expensive satellite link, delivering 80-90% additional savings beyond DNS blocking
@@ -97,6 +102,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 |-------|----------------|--------|-----------|
 | 1. Pi Network Foundation | 3/5 | In Progress | - |
 | 2. Usage Dashboard | 0/4 | Planned    |  |
-| 3. Tunnel Infrastructure | 0/TBD | Not started | - |
+| 3. Tunnel Infrastructure | 0/3 | Planned | - |
 | 4. Content Compression Proxy | 0/TBD | Not started | - |
 | 5. Certificate Management | 0/TBD | Not started | - |
