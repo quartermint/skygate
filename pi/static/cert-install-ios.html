@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate - Install Certificate (iOS)</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .install-page {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+        .install-page h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .install-subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .step {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .step h2 {
+            font-size: 1.1rem;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+        .step p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .step .path {
+            display: inline;
+            color: #38bdf8;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+            font-size: 0.85rem;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .download-btn:hover {
+            background: #2563eb;
+        }
+        .warning-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 12px;
+            color: #f59e0b;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .done-section {
+            text-align: center;
+            margin-top: 32px;
+        }
+        .done-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .done-btn:hover {
+            background: #059669;
+        }
+        .back-link {
+            display: block;
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="install-page">
+        <h1>Install Certificate (iOS)</h1>
+        <p class="install-subtitle">3 quick steps to enable Max Savings on your iPhone or iPad</p>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h2>Download Certificate Profile</h2>
+            <p>Tap the button below, then tap <strong>Allow</strong> when prompted to download the profile.</p>
+            <a href="/ca.mobileconfig" class="download-btn">Download Profile</a>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h2>Install Profile</h2>
+            <p>Open <span class="path">Settings &gt; General &gt; VPN &amp; Device Management</span></p>
+            <p>Tap <strong>SkyGate Max Savings</strong>, then tap <strong>Install</strong>.</p>
+            <p>Enter your passcode if prompted.</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h2>Enable Full Trust</h2>
+            <p>Open <span class="path">Settings &gt; General &gt; About &gt; Certificate Trust Settings</span></p>
+            <p>Enable full trust for <strong>SkyGate CA Certificate</strong>.</p>
+            <div class="warning-box">
+                This step is required. iOS does not trust custom CA certificates by default, even after installing the profile.
+            </div>
+        </div>
+
+        <div class="done-section">
+            <a href="/static/index.html" class="done-btn">Done - Go to Dashboard</a>
+            <a href="/static/mode-select.html" class="back-link">Back to mode selection</a>
+        </div>
+    </div>
+</body>
+</html>
