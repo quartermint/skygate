@@ -10,7 +10,8 @@ const (
 	nftFamily     = "inet"
 	nftTable      = "skygate"
 	nftDeviceSet  = "device_counters"
-	nftAllowedSet = "allowed_macs"
+	nftAllowedSet     = "allowed_macs"
+	nftMaxSavingsSet  = "maxsavings_macs"
 )
 
 // nftResult represents the top-level nft -j JSON output.

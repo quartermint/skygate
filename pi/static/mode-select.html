@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate - Choose Your Mode</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .mode-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .mode-container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        .mode-container h1 {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+        .mode-subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .mode-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        @media (min-width: 600px) {
+            .mode-cards {
+                flex-direction: row;
+            }
+        }
+        .mode-card {
+            flex: 1;
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.1s;
+        }
+        .mode-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .mode-card.selected {
+            border-color: #3b82f6;
+        }
+        .mode-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        .mode-card h2 {
+            font-size: 1.25rem;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+        .mode-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+        .mode-card .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        .badge-default {
+            background: rgba(16, 185, 129, 0.15);
+            color: #10b981;
+        }
+        .badge-max {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+        }
+        .mode-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-quickconnect {
+            background: #10b981;
+        }
+        .btn-quickconnect:hover {
+            background: #059669;
+        }
+        .btn-maxsavings {
+            background: #3b82f6;
+        }
+        .btn-maxsavings:hover {
+            background: #2563eb;
+        }
+        .mode-footer {
+            margin-top: 24px;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+        .mode-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .mode-footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body class="mode-page">
+    <div class="mode-container">
+        <h1>Choose Your Savings Mode</h1>
+        <p class="mode-subtitle">Select how SkyGate optimizes your connection</p>
+
+        <div class="mode-cards">
+            <div class="mode-card selected" id="card-quickconnect" onclick="selectMode('quickconnect')">
+                <div class="mode-card-icon">&#9889;</div>
+                <h2>Quick Connect</h2>
+                <span class="badge badge-default">Default</span>
+                <p>DNS-only blocking. Zero setup. Works immediately on all apps and browsers.</p>
+                <button type="button" class="mode-btn btn-quickconnect" id="btn-quickconnect" onclick="submitMode('quickconnect')">Continue with Quick Connect</button>
+            </div>
+
+            <div class="mode-card" id="card-maxsavings" onclick="selectMode('maxsavings')">
+                <div class="mode-card-icon">&#128640;</div>
+                <h2>Max Savings</h2>
+                <span class="badge badge-max">60-90% more savings</span>
+                <p>Proxy compression saves 60-90% more data. Requires installing a certificate (2-3 taps).</p>
+                <button type="button" class="mode-btn btn-maxsavings" id="btn-maxsavings" onclick="submitMode('maxsavings')">Enable Max Savings</button>
+            </div>
+        </div>
+
+        <p class="mode-footer">You can change this later in <a href="/static/settings.html">Settings</a></p>
+    </div>
+
+    <script>
+    // Get MAC from URL query param
+    var params = new URLSearchParams(window.location.search);
+    var mac = params.get('mac') || '';
+
+    function selectMode(mode) {
+        var cards = document.querySelectorAll('.mode-card');
+        cards.forEach(function(c) { c.classList.remove('selected'); });
+        document.getElementById('card-' + mode).classList.add('selected');
+    }
+
+    function submitMode(mode) {
+        var body = JSON.stringify({ mac: mac, mode: mode });
+        fetch('/api/mode', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: body
+        }).then(function(resp) {
+            if (!resp.ok) throw new Error('Failed to set mode');
+            return resp.json();
+        }).then(function() {
+            if (mode === 'maxsavings') {
+                // Detect platform and redirect to appropriate cert install page
+                var ua = navigator.userAgent || '';
+                if (/iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) {
+                    window.location.href = '/static/cert-install-ios.html?mac=' + encodeURIComponent(mac);
+                } else if (/Android/.test(ua)) {
+                    window.location.href = '/static/cert-install-android.html?mac=' + encodeURIComponent(mac);
+                } else {
+                    // Desktop or unknown -- show iOS guide as default
+                    window.location.href = '/static/cert-install-ios.html?mac=' + encodeURIComponent(mac);
+                }
+            } else {
+                window.location.href = '/static/index.html';
+            }
+        }).catch(function(err) {
+            alert('Error: ' + err.message);
+        });
+    }
+    </script>
+</body>
+</html>
