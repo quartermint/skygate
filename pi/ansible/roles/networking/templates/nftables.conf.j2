@@ -98,3 +98,6 @@ table inet skygate {
 {% endif %}
     }
 }
+
+# Include modular rules (dashboard captive portal, per-device counters)
+include "/etc/nftables.d/*.conf"

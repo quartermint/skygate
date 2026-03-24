@@ -6,7 +6,9 @@
     - base
     - networking
     - pihole
+    - dashboard
     - routing
     - wireguard
+    - certificate
     - qos
     - firstboot

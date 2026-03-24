@@ -4,7 +4,7 @@ ca_key_path: "/data/skygate/ca/root-ca.key"
 ca_download_addr: ":8080"
 intermediate_ca_cert_path: "/data/skygate/ca/intermediate-ca.crt"
 intermediate_ca_key_path: "/data/skygate/ca/intermediate-ca.key"
-dashboard_api_url: "http://10.0.0.2:8080"
+dashboard_api_url: "http://10.13.13.2:80"
 db_path: "/data/skygate/proxy.db"
 bypass_domains_file: "/etc/skygate/bypass-domains.yaml"
 verbose: false

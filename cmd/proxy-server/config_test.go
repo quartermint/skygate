@@ -88,8 +88,8 @@ func TestLoadConfig_Valid(t *testing.T) {
 	if cfg.IntermediateCAKeyPath != "/data/skygate/ca/intermediate-ca.key" {
 		t.Errorf("IntermediateCAKeyPath = %q, want %q", cfg.IntermediateCAKeyPath, "/data/skygate/ca/intermediate-ca.key")
 	}
-	if cfg.DashboardAPIURL != "http://10.0.0.2:8080" {
-		t.Errorf("DashboardAPIURL = %q, want %q", cfg.DashboardAPIURL, "http://10.0.0.2:8080")
+	if cfg.DashboardAPIURL != "http://10.13.13.2:80" {
+		t.Errorf("DashboardAPIURL = %q, want %q", cfg.DashboardAPIURL, "http://10.13.13.2:80")
 	}
 }
 

@@ -164,7 +164,7 @@ func (s *memCertStore) Fetch(host string, gen func() (*tls.Certificate, error)) 
 type MaxSavingsIPSet struct {
 	mu      sync.RWMutex
 	ips     map[string]bool
-	apiURL  string // e.g., "http://10.0.0.2:8080"
+	apiURL  string // e.g., "http://10.13.13.2:80"
 	enabled bool   // false when apiURL is empty (pre-Phase 5 mode)
 }
 
