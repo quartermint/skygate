@@ -2,6 +2,8 @@ package main
 
 import (
 	"crypto/tls"
+	"os"
+	"path/filepath"
 	"testing"
 )
 
@@ -199,3 +201,108 @@ func TestSetupProxy_BypassDomainLogic(t *testing.T) {
 		t.Error("nonbypass.com should NOT be bypassed")
 	}
 }
+
+func TestHardcodedBypassDomains(t *testing.T) {
+	// Verify the hardcodedBypassDomains var contains critical never-MITM domains.
+	required := []string{
+		"*.chase.com",
+		"*.gov",
+		"*.paypal.com",
+		"accounts.google.com",
+		"*.epic.com",
+		"*.bankofamerica.com",
+		"*.wellsfargo.com",
+		"*.mil",
+		"*.foreflight.com",
+	}
+
+	domainSet := make(map[string]bool)
+	for _, d := range hardcodedBypassDomains {
+		domainSet[d] = true
+	}
+
+	for _, r := range required {
+		if !domainSet[r] {
+			t.Errorf("hardcodedBypassDomains missing required domain: %q", r)
+		}
+	}
+}
+
+func TestBuildBypassSet_MergesHardcodedAndUser(t *testing.T) {
+	// Create a temp YAML file with user domains.
+	dir := t.TempDir()
+	userFile := filepath.Join(dir, "user-bypass.yaml")
+	content := "bypass_domains:\n  - example.com\n  - custom-domain.org\n"
+	if err := os.WriteFile(userFile, []byte(content), 0644); err != nil {
+		t.Fatalf("writing user bypass file: %v", err)
+	}
+
+	bs, err := BuildBypassSet(userFile)
+	if err != nil {
+		t.Fatalf("BuildBypassSet error: %v", err)
+	}
+
+	// User domains should be present.
+	if !bs.Contains("example.com") {
+		t.Error("expected example.com (user domain) in bypass set")
+	}
+	if !bs.Contains("custom-domain.org") {
+		t.Error("expected custom-domain.org (user domain) in bypass set")
+	}
+
+	// Hardcoded domains should also be present.
+	if !bs.Contains("online.chase.com") {
+		t.Error("expected online.chase.com to match *.chase.com (hardcoded)")
+	}
+	if !bs.Contains("app.wellsfargo.com") {
+		t.Error("expected app.wellsfargo.com to match *.wellsfargo.com (hardcoded)")
+	}
+}
+
+func TestBuildBypassSet_EmptyUserFile(t *testing.T) {
+	// Call with nonexistent file path -- hardcoded domains should still be present.
+	bs, err := BuildBypassSet("/nonexistent/path/bypass.yaml")
+	if err != nil {
+		t.Fatalf("BuildBypassSet error: %v", err)
+	}
+
+	// Hardcoded domains must be present even without user file.
+	if !bs.Contains("secure.chase.com") {
+		t.Error("expected secure.chase.com to match *.chase.com (hardcoded)")
+	}
+	if !bs.Contains("accounts.google.com") {
+		t.Error("expected accounts.google.com (hardcoded) in bypass set")
+	}
+	if !bs.Contains("login.microsoftonline.com") {
+		t.Error("expected login.microsoftonline.com (hardcoded) in bypass set")
+	}
+	if !bs.Contains("irs.gov") {
+		t.Error("expected irs.gov to match *.gov (hardcoded)")
+	}
+}
+
+func TestBuildBypassSet_UserCannotRemoveHardcoded(t *testing.T) {
+	// Even with an empty user file, hardcoded domains remain.
+	dir := t.TempDir()
+	emptyFile := filepath.Join(dir, "empty-bypass.yaml")
+	if err := os.WriteFile(emptyFile, []byte("bypass_domains: []\n"), 0644); err != nil {
+		t.Fatalf("writing empty bypass file: %v", err)
+	}
+
+	bs, err := BuildBypassSet(emptyFile)
+	if err != nil {
+		t.Fatalf("BuildBypassSet error: %v", err)
+	}
+
+	// All hardcoded domains still present.
+	if !bs.Contains("checkout.paypal.com") {
+		t.Error("expected checkout.paypal.com to match *.paypal.com (hardcoded)")
+	}
+	if !bs.Contains("portal.epic.com") {
+		t.Error("expected portal.epic.com to match *.epic.com (hardcoded)")
+	}
+}
+
+// Suppress unused import warnings
+var _ = os.WriteFile
+var _ = filepath.Join
