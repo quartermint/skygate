@@ -1,0 +1,49 @@
+---
+# Certificate Management Role
+# Generates root CA + intermediate CA on first boot.
+# Root CA stored at /data/skygate/ca/ (writable data partition).
+# Intermediate CA copied to remote proxy during setup.
+
+- name: Create CA directory
+  ansible.builtin.file:
+    path: /data/skygate/ca
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+
+- name: Deploy CA generation script
+  ansible.builtin.template:
+    src: ca-generate.sh.j2
+    dest: /opt/skygate/bin/ca-generate.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Check if root CA exists
+  ansible.builtin.stat:
+    path: /data/skygate/ca/root-ca.crt
+  register: root_ca_stat
+
+- name: Generate root CA and intermediate CA (first boot only)
+  ansible.builtin.command:
+    cmd: /opt/skygate/bin/ca-generate.sh
+  when: not root_ca_stat.stat.exists
+  notify: restart dashboard
+
+- name: Set root CA key permissions
+  ansible.builtin.file:
+    path: /data/skygate/ca/root-ca.key
+    owner: root
+    group: root
+    mode: "0600"
+  when: root_ca_stat.stat.exists or not root_ca_stat.stat.exists
+
+- name: Deploy user cert bypass domains config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../config/cert-bypass-domains.yaml"
+    dest: /data/skygate/cert-bypass-domains.yaml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart dashboard

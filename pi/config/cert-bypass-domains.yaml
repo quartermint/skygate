@@ -1,0 +1,13 @@
+# User-extensible cert-pinning bypass domains.
+# Add domains here that break in "Max Savings" mode.
+# These are MERGED with the hardcoded bypass list (banking, auth, gov, health, payments).
+# Hardcoded domains cannot be removed via this file.
+#
+# Format: exact domains or wildcard patterns (*.example.com)
+#
+# Example: If a passenger reports "my app doesn't work in Max Savings mode",
+# add the app's domain here and restart the proxy.
+bypass_domains:
+  # Add custom bypass domains below:
+  # - "*.example-app.com"
+  # - "custom.domain.com"
