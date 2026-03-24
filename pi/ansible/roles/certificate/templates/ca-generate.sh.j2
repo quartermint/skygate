@@ -1,0 +1,44 @@
+#!/bin/bash
+# SkyGate CA generation script
+# Generates root CA + intermediate CA using openssl
+# Called on first boot by Ansible when /data/skygate/ca/root-ca.crt doesn't exist
+
+set -euo pipefail
+
+CA_DIR="/data/skygate/ca"
+SSID="{{ ap_ssid | default('SkyGate') }}"
+
+# Generate root CA (ECDSA P-256, 3-year validity)
+openssl ecparam -genkey -name prime256v1 -noout -out "$CA_DIR/root-ca.key"
+chmod 0600 "$CA_DIR/root-ca.key"
+openssl req -new -x509 -key "$CA_DIR/root-ca.key" \
+    -out "$CA_DIR/root-ca.crt" \
+    -days 1095 \
+    -subj "/O=SkyGate/CN=SkyGate-${SSID} CA" \
+    -addext "basicConstraints=critical,CA:TRUE" \
+    -addext "keyUsage=critical,keyCertSign,cRLSign"
+chmod 0644 "$CA_DIR/root-ca.crt"
+
+# Generate intermediate CA (ECDSA P-256, 1-year validity, MaxPathLen=0)
+openssl ecparam -genkey -name prime256v1 -noout -out "$CA_DIR/intermediate-ca.key"
+chmod 0600 "$CA_DIR/intermediate-ca.key"
+
+# Create intermediate CSR
+openssl req -new -key "$CA_DIR/intermediate-ca.key" \
+    -out "$CA_DIR/intermediate-ca.csr" \
+    -subj "/O=SkyGate/CN=SkyGate Intermediate CA"
+
+# Sign intermediate with root CA (pathlen:0 = leaf-only signing)
+openssl x509 -req -in "$CA_DIR/intermediate-ca.csr" \
+    -CA "$CA_DIR/root-ca.crt" \
+    -CAkey "$CA_DIR/root-ca.key" \
+    -CAcreateserial \
+    -out "$CA_DIR/intermediate-ca.crt" \
+    -days 365 \
+    -extfile <(printf "basicConstraints=critical,CA:TRUE,pathlen:0\nkeyUsage=critical,keyCertSign,cRLSign")
+chmod 0644 "$CA_DIR/intermediate-ca.crt"
+
+# Cleanup CSR
+rm -f "$CA_DIR/intermediate-ca.csr" "$CA_DIR/root-ca.srl"
+
+echo "CA generation complete: root (3yr) + intermediate (1yr) at $CA_DIR"

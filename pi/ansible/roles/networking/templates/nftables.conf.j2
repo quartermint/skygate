@@ -12,6 +12,13 @@ table inet skygate {
         timeout 1h
     }
 
+    # Per-device Max Savings mode set (populated by dashboard daemon)
+    set maxsavings_macs {
+        type ether_addr
+        flags timeout
+        timeout 24h
+    }
+
     chain input {
         type filter hook input priority filter; policy drop;
 
