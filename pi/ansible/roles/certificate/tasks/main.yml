@@ -41,7 +41,7 @@
 
 - name: Deploy user cert bypass domains config
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../../config/cert-bypass-domains.yaml"
+    src: "{{ playbook_dir }}/../config/cert-bypass-domains.yaml"
     dest: /data/skygate/cert-bypass-domains.yaml
     owner: root
     group: root

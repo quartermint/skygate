@@ -55,8 +55,9 @@ func (s *Server) HandleCaptiveAccept(w http.ResponseWriter, r *http.Request) {
 a{color:#38bdf8;text-decoration:none;font-size:1.2em}</style>
 </head><body>
 <h1>Connected!</h1>
-<p>Open your browser and visit:</p>
-<p><a href="http://192.168.4.1">SkyGate Dashboard</a></p>
+<p>Choose your savings mode:</p>
+<p><a href="http://192.168.4.1/static/mode-select.html">Choose Savings Mode</a></p>
+<p style="font-size:0.9em;margin-top:1em"><a href="http://192.168.4.1" style="color:#94a3b8">Skip to Dashboard →</a></p>
 </body></html>`)
 }
 

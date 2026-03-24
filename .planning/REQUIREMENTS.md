@@ -28,7 +28,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Traffic Routing
 
 - [x] **ROUTE-01**: Aviation apps (ForeFlight, Garmin Pilot, aviationweather.gov, ADS-B services) bypass proxy and route directly to Starlink via DNS-driven ipset
-- [ ] **ROUTE-02**: Policy-based routing via nftables sends non-bypass traffic through WireGuard tunnel to remote proxy
+- [x] **ROUTE-02**: Policy-based routing via nftables sends non-bypass traffic through WireGuard tunnel to remote proxy
 
 ### Quality of Service
 
@@ -36,7 +36,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Tunnel Infrastructure
 
-- [ ] **TUN-01**: WireGuard kernel-mode tunnel connects Pi to remote proxy server with keepalive and auto-reconnect on connectivity loss
+- [x] **TUN-01**: WireGuard kernel-mode tunnel connects Pi to remote proxy server with keepalive and auto-reconnect on connectivity loss
 
 ### Content Proxy
 
