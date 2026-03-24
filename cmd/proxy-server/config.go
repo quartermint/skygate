@@ -17,6 +17,7 @@ type Config struct {
 	BypassDomainsFile      string       `yaml:"bypass_domains_file"`
 	IntermediateCACertPath string       `yaml:"intermediate_ca_cert_path"`
 	IntermediateCAKeyPath  string       `yaml:"intermediate_ca_key_path"`
+	DashboardAPIURL        string       `yaml:"dashboard_api_url"`
 	Verbose                bool         `yaml:"verbose"`
 	Image             ImageConfig  `yaml:"image"`
 	Minify            MinifyConfig `yaml:"minify"`

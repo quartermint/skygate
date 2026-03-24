@@ -1,4 +1,4 @@
-.PHONY: build build-bypass build-dashboard build-tunnel build-proxy build-all test test-go test-bats test-proxy test-all lint lint-ansible deploy deploy-check clean cross-build cross-build-bypass cross-build-dashboard cross-build-tunnel docker-build docker-up docker-down help
+.PHONY: build build-bypass build-dashboard build-tunnel build-proxy build-all test test-go test-bats test-proxy test-all lint lint-ansible deploy deploy-check clean cross-build cross-build-bypass cross-build-dashboard cross-build-tunnel docker-build docker-up docker-down provision-ca help
 
 # Go settings
 GOOS ?= linux
@@ -73,6 +73,15 @@ docker-up: ## Start remote server stack (WireGuard + proxy)
 
 docker-down: ## Stop remote server stack
 	cd server && docker compose down
+
+## Certificate Management
+
+provision-ca: ## Copy intermediate CA from Pi to server (run after first boot)
+	@echo "Copying intermediate CA from Pi to server..."
+	@echo "Run: scp $(PI_HOST):/data/skygate/ca/intermediate-ca.crt server/ca/"
+	@echo "Run: scp $(PI_HOST):/data/skygate/ca/intermediate-ca.key server/ca/"
+	@echo "Run: scp $(PI_HOST):/data/skygate/ca/root-ca.crt server/ca/"
+	@echo "Then: cd server && docker compose restart proxy"
 
 ## Deploy
 

@@ -17,11 +17,11 @@ func TestLoadConfig_Valid(t *testing.T) {
 	if cfg.ListenAddr != ":8443" {
 		t.Errorf("ListenAddr = %q, want %q", cfg.ListenAddr, ":8443")
 	}
-	if cfg.CACertPath != "/data/skygate/ca.crt" {
-		t.Errorf("CACertPath = %q, want %q", cfg.CACertPath, "/data/skygate/ca.crt")
+	if cfg.CACertPath != "/data/skygate/ca/root-ca.crt" {
+		t.Errorf("CACertPath = %q, want %q", cfg.CACertPath, "/data/skygate/ca/root-ca.crt")
 	}
-	if cfg.CAKeyPath != "/data/skygate/ca.key" {
-		t.Errorf("CAKeyPath = %q, want %q", cfg.CAKeyPath, "/data/skygate/ca.key")
+	if cfg.CAKeyPath != "/data/skygate/ca/root-ca.key" {
+		t.Errorf("CAKeyPath = %q, want %q", cfg.CAKeyPath, "/data/skygate/ca/root-ca.key")
 	}
 	if cfg.CADownloadAddr != ":8080" {
 		t.Errorf("CADownloadAddr = %q, want %q", cfg.CADownloadAddr, ":8080")
@@ -46,8 +46,8 @@ func TestLoadConfig_Valid(t *testing.T) {
 	if cfg.Image.TimeoutMS != 500 {
 		t.Errorf("Image.TimeoutMS = %d, want 500", cfg.Image.TimeoutMS)
 	}
-	if cfg.Image.MaxSizeBytes != 10485760 {
-		t.Errorf("Image.MaxSizeBytes = %d, want 10485760", cfg.Image.MaxSizeBytes)
+	if cfg.Image.MaxSizeBytes != 5242880 {
+		t.Errorf("Image.MaxSizeBytes = %d, want 5242880", cfg.Image.MaxSizeBytes)
 	}
 	if cfg.Image.ConcurrentLimit != 4 {
 		t.Errorf("Image.ConcurrentLimit = %d, want 4", cfg.Image.ConcurrentLimit)
@@ -69,16 +69,27 @@ func TestLoadConfig_Valid(t *testing.T) {
 	if !cfg.Minify.SVG {
 		t.Error("Minify.SVG = false, want true")
 	}
-	if !cfg.Minify.JSON {
-		t.Error("Minify.JSON = false, want true")
+	if cfg.Minify.JSON {
+		t.Error("Minify.JSON = true, want false")
 	}
 
 	// Log config
-	if cfg.Log.RetentionDays != 30 {
-		t.Errorf("Log.RetentionDays = %d, want 30", cfg.Log.RetentionDays)
+	if cfg.Log.RetentionDays != 7 {
+		t.Errorf("Log.RetentionDays = %d, want 7", cfg.Log.RetentionDays)
 	}
-	if cfg.Log.BatchIntervalS != 10 {
-		t.Errorf("Log.BatchIntervalS = %d, want 10", cfg.Log.BatchIntervalS)
+	if cfg.Log.BatchIntervalS != 30 {
+		t.Errorf("Log.BatchIntervalS = %d, want 30", cfg.Log.BatchIntervalS)
+	}
+
+	// Phase 5: Intermediate CA and dashboard API
+	if cfg.IntermediateCACertPath != "/data/skygate/ca/intermediate-ca.crt" {
+		t.Errorf("IntermediateCACertPath = %q, want %q", cfg.IntermediateCACertPath, "/data/skygate/ca/intermediate-ca.crt")
+	}
+	if cfg.IntermediateCAKeyPath != "/data/skygate/ca/intermediate-ca.key" {
+		t.Errorf("IntermediateCAKeyPath = %q, want %q", cfg.IntermediateCAKeyPath, "/data/skygate/ca/intermediate-ca.key")
+	}
+	if cfg.DashboardAPIURL != "http://10.0.0.2:8080" {
+		t.Errorf("DashboardAPIURL = %q, want %q", cfg.DashboardAPIURL, "http://10.0.0.2:8080")
 	}
 }
 

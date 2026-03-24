@@ -2,10 +2,12 @@ package main
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/elazarl/goproxy"
 )
@@ -155,12 +157,109 @@ func (s *memCertStore) Fetch(host string, gen func() (*tls.Certificate, error)) 
 	return cert, nil
 }
 
+// MaxSavingsIPSet tracks which client source IPs are in "Max Savings" mode.
+// The proxy polls the Pi's dashboard daemon /api/mode/ips endpoint to populate this set.
+// IPs in this set get ConnectMitm (HTTPS interception with intermediate CA).
+// IPs NOT in this set get ConnectAccept (TCP passthrough, no MITM).
+type MaxSavingsIPSet struct {
+	mu      sync.RWMutex
+	ips     map[string]bool
+	apiURL  string // e.g., "http://10.0.0.2:8080"
+	enabled bool   // false when apiURL is empty (pre-Phase 5 mode)
+}
+
+// NewMaxSavingsIPSet creates a new IP set. If apiURL is empty, the set is disabled
+// and Contains() always returns true (MITM all non-bypass traffic, pre-Phase 5 behavior).
+func NewMaxSavingsIPSet(apiURL string) *MaxSavingsIPSet {
+	return &MaxSavingsIPSet{
+		ips:     make(map[string]bool),
+		apiURL:  apiURL,
+		enabled: apiURL != "",
+	}
+}
+
+// Contains returns true if the IP should receive MITM treatment.
+// When the set is disabled (no apiURL), returns true for all IPs (backward-compatible).
+func (s *MaxSavingsIPSet) Contains(ip string) bool {
+	if !s.enabled {
+		return true // Pre-Phase 5: MITM everything
+	}
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.ips[ip]
+}
+
+// Update replaces the IP set with a new list of IPs.
+func (s *MaxSavingsIPSet) Update(ips []string) {
+	newSet := make(map[string]bool, len(ips))
+	for _, ip := range ips {
+		newSet[ip] = true
+	}
+	s.mu.Lock()
+	s.ips = newSet
+	s.mu.Unlock()
+}
+
+// StartPolling begins periodic polling of the dashboard API.
+// Runs in a loop until stopped. Logs warnings on fetch errors
+// but continues with the last known set (graceful degradation per Pitfall 6).
+func (s *MaxSavingsIPSet) StartPolling(interval time.Duration) {
+	if !s.enabled {
+		return
+	}
+	client := &http.Client{Timeout: 5 * time.Second}
+	url := strings.TrimRight(s.apiURL, "/") + "/api/mode/ips"
+	ticker := time.NewTicker(interval)
+	defer ticker.Stop()
+	// Fetch immediately on start, then on each tick
+	s.fetchAndUpdate(client, url)
+	for range ticker.C {
+		s.fetchAndUpdate(client, url)
+	}
+}
+
+// fetchAndUpdate fetches the current Max Savings IPs from the dashboard API.
+func (s *MaxSavingsIPSet) fetchAndUpdate(client *http.Client, url string) {
+	resp, err := client.Get(url)
+	if err != nil {
+		log.Printf("WARN: failed to fetch Max Savings IPs from %s: %v (using last known set)", url, err)
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("WARN: dashboard API returned %d for %s (using last known set)", resp.StatusCode, url)
+		return
+	}
+	var result struct {
+		MaxSavingsIPs []string `json:"maxsavings_ips"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Printf("WARN: failed to decode Max Savings IPs response: %v (using last known set)", err)
+		return
+	}
+	s.Update(result.MaxSavingsIPs)
+}
+
+// extractSourceIP extracts the client IP from the CONNECT request.
+// The source IP is preserved through the WireGuard tunnel from the Pi's subnet.
+func extractSourceIP(req *http.Request) string {
+	if req == nil {
+		return ""
+	}
+	host := req.RemoteAddr
+	// RemoteAddr is typically "IP:port"
+	if idx := strings.LastIndex(host, ":"); idx != -1 {
+		return host[:idx]
+	}
+	return host
+}
+
 // SetupProxy configures the goproxy proxy server with:
 // - In-memory CertStore for on-the-fly leaf cert caching (D-13)
 // - Conditional MITM: bypass domains get ConnectAccept, others get ConnectMitm (D-06, D-09)
 // - Response handler chain: Content-Type routing to transcoder/minifier (D-07, D-08)
 // Returns the configured *goproxy.ProxyHttpServer.
-func SetupProxy(caCert *tls.Certificate, bypassSet *BypassSet, chain *HandlerChain, verbose bool) *goproxy.ProxyHttpServer {
+func SetupProxy(caCert *tls.Certificate, bypassSet *BypassSet, maxSavingsIPs *MaxSavingsIPSet, chain *HandlerChain, verbose bool) *goproxy.ProxyHttpServer {
 	proxy := goproxy.NewProxyHttpServer()
 	proxy.Verbose = verbose
 
@@ -170,15 +269,32 @@ func SetupProxy(caCert *tls.Certificate, bypassSet *BypassSet, chain *HandlerCha
 	// 1024 entries covers typical browsing session with ample headroom.
 	proxy.CertStore = newMemCertStore(1024)
 
-	// Conditional MITM per D-09
+	// Conditional MITM per D-09, with per-device mode awareness (Phase 5)
 	proxy.OnRequest().HandleConnectFunc(
 		func(host string, ctx *goproxy.ProxyCtx) (*goproxy.ConnectAction, string) {
 			hostname := stripPort(host)
+
+			// Always bypass cert-pinned domains (D-14)
 			if bypassSet.Contains(hostname) {
 				if verbose {
 					log.Printf("BYPASS: %s (cert-pinned/bypass list)", hostname)
 				}
 				return &goproxy.ConnectAction{Action: goproxy.ConnectAccept}, host
+			}
+
+			// Check if source device is in Max Savings mode (per Research Pattern 3, Pitfall 5)
+			sourceIP := extractSourceIP(ctx.Req)
+			if !maxSavingsIPs.Contains(sourceIP) {
+				// Quick Connect device: TCP passthrough, no MITM
+				if verbose {
+					log.Printf("PASSTHROUGH: %s from %s (Quick Connect mode)", hostname, sourceIP)
+				}
+				return &goproxy.ConnectAction{Action: goproxy.ConnectAccept}, host
+			}
+
+			// Max Savings device: MITM with intermediate CA
+			if verbose {
+				log.Printf("MITM: %s from %s (Max Savings mode)", hostname, sourceIP)
 			}
 			return &goproxy.ConnectAction{
 				Action:    goproxy.ConnectMitm,
