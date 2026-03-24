@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_for_verification
+status: Milestone complete
 stopped_at: Completed 05-03-PLAN.md
-last_updated: "2026-03-24T00:52:38Z"
+last_updated: "2026-03-24T01:00:57.879Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 18
   completed_plans: 18
 ---
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-22)
 ## Current Position
 
 Phase: 05
-Plan: 03 (complete)
+Plan: Not started
 
 ## Performance Metrics
 
@@ -62,6 +62,8 @@ Plan: 03 (complete)
 | Phase 04 P01 | 5 | 2 tasks | 8 files |
 | Phase 04 P02 | 7 | 2 tasks | 8 files |
 | Phase 04 P03 | 11 | 2 tasks | 7 files |
+| Phase 05 P01 | 6 | 2 tasks | 5 files |
+| Phase 05 P02 | 9 | 2 tasks | 14 files |
 | Phase 05 P03 | 8 | 3 tasks | 14 files |
 
 ## Accumulated Context
@@ -130,6 +132,13 @@ Recent decisions affecting current work:
 - [Phase 04]: goproxy.CertStorage uses Fetch(host, gen) pattern -- gen() called on cache miss, not separate Store method
 - [Phase 04]: Proxy ports mapped on wireguard container per Docker network_mode: service:wireguard constraint
 - [Phase 04]: build target remains Pi-only (CGO_ENABLED=0); build-all includes proxy (CGO_ENABLED=1)
+- [Phase 05]: Root CA uses random 128-bit serial numbers for cryptographic uniqueness across appliances
+- [Phase 05]: BuildBypassSet graceful degradation: user file failures logged as warnings, hardcoded domains always present
+- [Phase 05]: Intermediate CA config fields added to Config struct; main.go wiring deferred to Plan 03
+- [Phase 05]: device_modes table uses INSERT OR REPLACE for upsert, consistent with portal_accepted pattern
+- [Phase 05]: GetMaxSavingsIPs uses JOIN with portal_accepted for MAC-to-IP resolution (Research Pattern 3)
+- [Phase 05]: Deterministic UUIDs for .mobileconfig derived from cert SHA-256 -- consistent across requests
+- [Phase 05]: nftables maxsavings_macs ops log warnings on failure but do not fail request (eventual consistency)
 - [Phase 05]: MaxSavingsIPSet polls /api/mode/ips every 10s with graceful degradation on failure
 - [Phase 05]: Empty DashboardAPIURL disables per-device mode -- MITM all non-bypass (backward compatible)
 - [Phase 05]: Intermediate CA loaded via tls.LoadX509KeyPair with fallback to root CA
@@ -146,6 +155,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T00:52:38Z
+Last session: 2026-03-24T00:54:19.786Z
 Stopped at: Completed 05-03-PLAN.md
 Resume file: None

@@ -40,14 +40,14 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Content Proxy
 
-- [ ] **PROXY-01**: Go-based MITM proxy on remote server (built on goproxy) transcodes images (JPEG quality reduction, PNG/JPEG to WebP) and minifies JS/CSS
-- [ ] **PROXY-02**: Remote proxy server deployable via one-command Docker Compose with WireGuard server endpoint
+- [x] **PROXY-01**: Go-based MITM proxy on remote server (built on goproxy) transcodes images (JPEG quality reduction, PNG/JPEG to WebP) and minifies JS/CSS
+- [x] **PROXY-02**: Remote proxy server deployable via one-command Docker Compose with WireGuard server endpoint
 
 ### Certificate Management
 
-- [ ] **CERT-01**: Captive portal presents "Quick Connect" (DNS blocking only, zero friction) and "Max Savings" (proxy + CA cert) mode selection
-- [ ] **CERT-02**: Per-device CA certificate generated and downloadable via captive portal — iOS .mobileconfig profile and Android cert install flow
-- [ ] **CERT-03**: Certificate pinning bypass list prevents proxy from breaking banking, auth, and cert-pinned apps
+- [x] **CERT-01**: Captive portal presents "Quick Connect" (DNS blocking only, zero friction) and "Max Savings" (proxy + CA cert) mode selection
+- [x] **CERT-02**: Per-device CA certificate generated and downloadable via captive portal — iOS .mobileconfig profile and Android cert install flow
+- [x] **CERT-03**: Certificate pinning bypass list prevents proxy from breaking banking, auth, and cert-pinned apps
 
 ## v2 Requirements
 
@@ -123,11 +123,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | ROUTE-02 | Phase 3 | Pending |
 | QOS-01 | Phase 1 | Complete |
 | TUN-01 | Phase 3 | Pending |
-| PROXY-01 | Phase 4 | Pending |
-| PROXY-02 | Phase 4 | Pending |
-| CERT-01 | Phase 5 | Pending |
-| CERT-02 | Phase 5 | Pending |
-| CERT-03 | Phase 5 | Pending |
+| PROXY-01 | Phase 4 | Complete |
+| PROXY-02 | Phase 4 | Complete |
+| CERT-01 | Phase 5 | Complete |
+| CERT-02 | Phase 5 | Complete |
+| CERT-03 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 18 total

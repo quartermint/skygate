@@ -99,8 +99,8 @@ Plans:
 **UI hint**: yes
 
 Plans:
-- [ ] 05-01-PLAN.md -- Certificate infrastructure: root CA generation (SSID in CN), intermediate CA delegation, hardcoded never-MITM bypass domains
-- [ ] 05-02-PLAN.md -- Mode selection UX: per-device Quick Connect/Max Savings API, .mobileconfig and .crt download handlers, cert install guide pages
+- [x] 05-01-PLAN.md -- Certificate infrastructure: root CA generation (SSID in CN), intermediate CA delegation, hardcoded never-MITM bypass domains
+- [x] 05-02-PLAN.md -- Mode selection UX: per-device Quick Connect/Max Savings API, .mobileconfig and .crt download handlers, cert install guide pages
 - [ ] 05-03-PLAN.md -- Integration wiring: Ansible certificate role, nftables maxsavings_macs set, Docker Compose intermediate CA volume, proxy main.go updates
 
 ## Progress
@@ -114,4 +114,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Usage Dashboard | 4/4 | Complete | 2026-03-23 |
 | 3. Tunnel Infrastructure | 3/3 | Complete | 2026-03-23 |
 | 4. Content Compression Proxy | 3/3 | Complete | 2026-03-23 |
-| 5. Certificate Management | 0/3 | Not started | - |
+| 5. Certificate Management | 2/3 | In Progress|  |
