@@ -1,16 +1,19 @@
 listen_addr: ":8443"
-ca_cert_path: /data/skygate/ca.crt
-ca_key_path: /data/skygate/ca.key
+ca_cert_path: "/data/skygate/ca/root-ca.crt"
+ca_key_path: "/data/skygate/ca/root-ca.key"
 ca_download_addr: ":8080"
-db_path: /data/skygate/proxy.db
-bypass_domains_file: /etc/skygate/bypass-domains.yaml
+intermediate_ca_cert_path: "/data/skygate/ca/intermediate-ca.crt"
+intermediate_ca_key_path: "/data/skygate/ca/intermediate-ca.key"
+dashboard_api_url: "http://10.0.0.2:8080"
+db_path: "/data/skygate/proxy.db"
+bypass_domains_file: "/etc/skygate/bypass-domains.yaml"
 verbose: false
 
 image:
   quality: 30
   max_width: 800
   timeout_ms: 500
-  max_size_bytes: 10485760
+  max_size_bytes: 5242880
   concurrent_limit: 4
 
 minify:
@@ -19,8 +22,8 @@ minify:
   css: true
   js: true
   svg: true
-  json: true
+  json: false
 
 log:
-  retention_days: 30
-  batch_interval_s: 10
+  retention_days: 7
+  batch_interval_s: 30

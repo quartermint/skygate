@@ -44,6 +44,11 @@ services:
       - proxy-data:/data/skygate
       - ./proxy-config.yaml:/etc/skygate/proxy.yaml:ro
       - ./bypass-domains.yaml:/etc/skygate/bypass-domains.yaml:ro
+      - ./ca:/data/skygate/ca:ro    # Intermediate CA cert+key from Pi
+      # Phase 5: Copy intermediate CA from Pi to server/ca/ directory:
+      #   scp pi:/data/skygate/ca/intermediate-ca.crt server/ca/
+      #   scp pi:/data/skygate/ca/intermediate-ca.key server/ca/
+      #   scp pi:/data/skygate/ca/root-ca.crt server/ca/  # For ca.crt download endpoint
     environment:
       - SKYGATE_CONFIG=/etc/skygate/proxy.yaml
     restart: unless-stopped

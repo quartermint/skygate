@@ -178,7 +178,8 @@ func TestSetupProxy_ReturnsNonNil(t *testing.T) {
 	bypassSet := NewBypassSet([]string{"example.com"})
 	chain := &HandlerChain{}
 
-	proxy := SetupProxy(caCert, bypassSet, chain, false)
+	maxSavingsIPs := NewMaxSavingsIPSet("") // disabled, MITM all
+	proxy := SetupProxy(caCert, bypassSet, maxSavingsIPs, chain, false)
 	if proxy == nil {
 		t.Fatal("expected non-nil proxy from SetupProxy")
 	}

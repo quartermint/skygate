@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"flag"
 	"fmt"
 	"log"
@@ -29,21 +30,37 @@ func main() {
 	log.Printf("Config loaded: listen=%s, image_quality=%d, max_width=%d",
 		cfg.ListenAddr, cfg.Image.Quality, cfg.Image.MaxWidth)
 
-	// 2. Load or generate CA certificate (D-11)
-	caCert, err := LoadOrGenerateCA(cfg.CACertPath, cfg.CAKeyPath)
-	if err != nil {
-		log.Fatalf("Failed to load/generate CA: %v", err)
+	// 2. Load or generate CA certificates
+	// Phase 5: Use intermediate CA for MITM leaf signing (root CA key stays on Pi per D-08).
+	// The intermediate CA cert+key are provisioned from the Pi during setup.
+	var mitmCert *tls.Certificate
+	if cfg.IntermediateCACertPath != "" && cfg.IntermediateCAKeyPath != "" {
+		// Phase 5 mode: load intermediate CA for MITM
+		cert, err := tls.LoadX509KeyPair(cfg.IntermediateCACertPath, cfg.IntermediateCAKeyPath)
+		if err != nil {
+			log.Printf("WARN: Failed to load intermediate CA: %v (falling back to root CA)", err)
+		} else {
+			mitmCert = &cert
+			log.Printf("Intermediate CA loaded from %s", cfg.IntermediateCACertPath)
+		}
 	}
-	log.Printf("CA certificate ready at %s", cfg.CACertPath)
+	if mitmCert == nil {
+		// Fallback: use root/auto-generated CA (pre-Phase 5 behavior)
+		cert, err := LoadOrGenerateCA(cfg.CACertPath, cfg.CAKeyPath)
+		if err != nil {
+			log.Fatalf("Failed to load/generate CA: %v", err)
+		}
+		mitmCert = cert
+		log.Printf("CA certificate ready at %s", cfg.CACertPath)
+	}
 
-	// 3. Load bypass domains (D-09)
-	bypassDomains, err := LoadBypassDomains(cfg.BypassDomainsFile)
+	// 3. Load bypass domains (hardcoded never-MITM + user YAML per D-14, D-15)
+	bypassSet, err := BuildBypassSet(cfg.BypassDomainsFile)
 	if err != nil {
-		log.Printf("WARN: Failed to load bypass domains: %v (using empty list)", err)
-		bypassDomains = []string{}
+		log.Printf("WARN: BuildBypassSet error: %v (using hardcoded only)", err)
+		bypassSet = NewBypassSet(hardcodedBypassDomains)
 	}
-	bypassSet := NewBypassSet(bypassDomains)
-	log.Printf("Loaded %d bypass domains", len(bypassDomains))
+	log.Printf("Bypass set loaded: hardcoded + user domains")
 
 	// 4. Initialize SQLite database (D-10)
 	db, err := NewDB(cfg.DBPath)
@@ -58,8 +75,13 @@ func main() {
 	minifier := NewMinifier(cfg.Minify)
 	chain := NewHandlerChain(transcoder, minifier, db, cfg.Verbose)
 
-	// 6. Setup goproxy
-	proxy := SetupProxy(caCert, bypassSet, chain, cfg.Verbose)
+	// 5b. Create MaxSavingsIPSet for per-device MITM decision
+	// Polls the Pi's dashboard daemon /api/mode/ips endpoint (via WireGuard tunnel)
+	maxSavingsIPs := NewMaxSavingsIPSet(cfg.DashboardAPIURL)
+	go maxSavingsIPs.StartPolling(10 * time.Second) // Poll every 10 seconds
+
+	// 6. Setup goproxy with intermediate CA (or fallback root CA)
+	proxy := SetupProxy(mitmCert, bypassSet, maxSavingsIPs, chain, cfg.Verbose)
 
 	// 7. CA cert download endpoint (D-12)
 	// Serve CA cert on CADownloadAddr for Phase 5 captive portal to fetch
