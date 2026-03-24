@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	"net/http"
 	"os"
 	"path/filepath"
 	"testing"
@@ -301,6 +302,190 @@ func TestBuildBypassSet_UserCannotRemoveHardcoded(t *testing.T) {
 	}
 	if !bs.Contains("portal.epic.com") {
 		t.Error("expected portal.epic.com to match *.epic.com (hardcoded)")
+	}
+}
+
+// --- MaxSavingsIPSet Tests (Phase 5 Plan 03 Task 3) ---
+
+func TestMaxSavingsIPSet_Contains(t *testing.T) {
+	// Create enabled set with manually added IPs.
+	ipSet := NewMaxSavingsIPSet("http://localhost:9999")
+	ipSet.Update([]string{"192.168.4.2", "192.168.4.5", "192.168.4.10"})
+
+	// Added IPs should return true.
+	if !ipSet.Contains("192.168.4.2") {
+		t.Error("expected 192.168.4.2 to be in MaxSavingsIPSet")
+	}
+	if !ipSet.Contains("192.168.4.5") {
+		t.Error("expected 192.168.4.5 to be in MaxSavingsIPSet")
+	}
+	if !ipSet.Contains("192.168.4.10") {
+		t.Error("expected 192.168.4.10 to be in MaxSavingsIPSet")
+	}
+
+	// Non-added IPs should return false.
+	if ipSet.Contains("192.168.4.3") {
+		t.Error("expected 192.168.4.3 to NOT be in MaxSavingsIPSet")
+	}
+	if ipSet.Contains("10.0.0.1") {
+		t.Error("expected 10.0.0.1 to NOT be in MaxSavingsIPSet")
+	}
+}
+
+func TestMaxSavingsIPSet_Update(t *testing.T) {
+	// Verify Update replaces the full set (old IPs gone, new IPs present).
+	ipSet := NewMaxSavingsIPSet("http://localhost:9999")
+
+	// First update with set A.
+	ipSet.Update([]string{"192.168.4.1", "192.168.4.2"})
+	if !ipSet.Contains("192.168.4.1") {
+		t.Error("expected 192.168.4.1 after first Update")
+	}
+	if !ipSet.Contains("192.168.4.2") {
+		t.Error("expected 192.168.4.2 after first Update")
+	}
+
+	// Second update with set B -- set A IPs should be gone.
+	ipSet.Update([]string{"192.168.4.10", "192.168.4.20"})
+	if ipSet.Contains("192.168.4.1") {
+		t.Error("expected 192.168.4.1 to be GONE after second Update")
+	}
+	if ipSet.Contains("192.168.4.2") {
+		t.Error("expected 192.168.4.2 to be GONE after second Update")
+	}
+	if !ipSet.Contains("192.168.4.10") {
+		t.Error("expected 192.168.4.10 after second Update")
+	}
+	if !ipSet.Contains("192.168.4.20") {
+		t.Error("expected 192.168.4.20 after second Update")
+	}
+}
+
+func TestMaxSavingsIPSet_EmptyURL(t *testing.T) {
+	// NewMaxSavingsIPSet with empty URL returns disabled set.
+	// Contains always returns true (MITM all, pre-Phase 5 behavior).
+	ipSet := NewMaxSavingsIPSet("")
+
+	if !ipSet.Contains("192.168.4.1") {
+		t.Error("disabled MaxSavingsIPSet should return true for any IP")
+	}
+	if !ipSet.Contains("10.0.0.1") {
+		t.Error("disabled MaxSavingsIPSet should return true for any IP")
+	}
+	if !ipSet.Contains("") {
+		t.Error("disabled MaxSavingsIPSet should return true even for empty string")
+	}
+	if ipSet.enabled {
+		t.Error("MaxSavingsIPSet with empty URL should not be enabled")
+	}
+}
+
+func TestMaxSavingsIPSet_EnabledEmptySet(t *testing.T) {
+	// Enabled set with no IPs should return false (no devices in Max Savings mode).
+	ipSet := NewMaxSavingsIPSet("http://localhost:9999")
+
+	if ipSet.Contains("192.168.4.1") {
+		t.Error("enabled but empty MaxSavingsIPSet should return false")
+	}
+}
+
+func TestExtractSourceIP(t *testing.T) {
+	tests := []struct {
+		remoteAddr string
+		want       string
+	}{
+		{"192.168.4.2:12345", "192.168.4.2"},
+		{"10.0.0.1:443", "10.0.0.1"},
+		{"192.168.4.5", "192.168.4.5"},
+		{"[::1]:8080", "[::1]"},
+	}
+
+	for _, tt := range tests {
+		req := &http.Request{RemoteAddr: tt.remoteAddr}
+		got := extractSourceIP(req)
+		if got != tt.want {
+			t.Errorf("extractSourceIP(RemoteAddr=%q) = %q, want %q", tt.remoteAddr, got, tt.want)
+		}
+	}
+}
+
+func TestExtractSourceIP_NilRequest(t *testing.T) {
+	got := extractSourceIP(nil)
+	if got != "" {
+		t.Errorf("extractSourceIP(nil) = %q, want empty string", got)
+	}
+}
+
+func TestSetupProxy_QuickConnectPassthrough(t *testing.T) {
+	// SetupProxy with MaxSavingsIPSet that does NOT contain a source IP
+	// should result in ConnectAccept (TCP passthrough) for non-bypass hosts.
+	caCert := &tls.Certificate{}
+	bypassSet := NewBypassSet([]string{"bypass.example.com"})
+	chain := &HandlerChain{}
+
+	// MaxSavingsIPSet with specific IPs -- NOT including "192.168.4.99"
+	maxSavingsIPs := NewMaxSavingsIPSet("http://localhost:9999")
+	maxSavingsIPs.Update([]string{"192.168.4.2", "192.168.4.5"})
+
+	proxy := SetupProxy(caCert, bypassSet, maxSavingsIPs, chain, false)
+	if proxy == nil {
+		t.Fatal("expected non-nil proxy from SetupProxy")
+	}
+
+	// For Quick Connect devices (not in Max Savings set), verify the
+	// MaxSavingsIPSet returns false (no MITM).
+	if maxSavingsIPs.Contains("192.168.4.99") {
+		t.Error("192.168.4.99 should NOT be in MaxSavingsIPSet (Quick Connect device)")
+	}
+}
+
+func TestSetupProxy_MaxSavingsMITM(t *testing.T) {
+	// SetupProxy with MaxSavingsIPSet that DOES contain a source IP
+	// should result in ConnectMitm for non-bypass hosts.
+	caCert := &tls.Certificate{}
+	bypassSet := NewBypassSet([]string{"bypass.example.com"})
+	chain := &HandlerChain{}
+
+	// MaxSavingsIPSet with specific IPs -- INCLUDING "192.168.4.2"
+	maxSavingsIPs := NewMaxSavingsIPSet("http://localhost:9999")
+	maxSavingsIPs.Update([]string{"192.168.4.2", "192.168.4.5"})
+
+	proxy := SetupProxy(caCert, bypassSet, maxSavingsIPs, chain, false)
+	if proxy == nil {
+		t.Fatal("expected non-nil proxy from SetupProxy")
+	}
+
+	// For Max Savings devices (in the set), verify the set returns true (MITM).
+	if !maxSavingsIPs.Contains("192.168.4.2") {
+		t.Error("192.168.4.2 SHOULD be in MaxSavingsIPSet (Max Savings device)")
+	}
+	if !maxSavingsIPs.Contains("192.168.4.5") {
+		t.Error("192.168.4.5 SHOULD be in MaxSavingsIPSet (Max Savings device)")
+	}
+}
+
+func TestSetupProxy_BypassAlwaysAccept(t *testing.T) {
+	// Bypass domains get ConnectAccept regardless of MaxSavingsIPSet membership.
+	bypassSet := NewBypassSet([]string{"*.chase.com", "accounts.google.com"})
+
+	// MaxSavingsIPSet enabled and containing all IPs -- bypass should still work.
+	maxSavingsIPs := NewMaxSavingsIPSet("http://localhost:9999")
+	maxSavingsIPs.Update([]string{"192.168.4.2", "192.168.4.5"})
+
+	// Even though the IP is in Max Savings mode, bypass domains bypass MITM.
+	if !bypassSet.Contains("online.chase.com") {
+		t.Error("online.chase.com should be bypassed regardless of mode")
+	}
+	if !bypassSet.Contains("accounts.google.com") {
+		t.Error("accounts.google.com should be bypassed regardless of mode")
+	}
+
+	// Non-bypass domain with Max Savings IP should be MITMed.
+	if bypassSet.Contains("example.com") {
+		t.Error("example.com should NOT be bypassed")
+	}
+	if !maxSavingsIPs.Contains("192.168.4.2") {
+		t.Error("192.168.4.2 should be in Max Savings (gets MITM for non-bypass)")
 	}
 }
 
