@@ -59,3 +59,33 @@
 - Phase 05: discussed, not yet planned (Certificate Management)
 - No blockers, no pending todos, no active debug sessions
 - Next: `/gsd:execute-phase 01` (finish last plan) or `/gsd:execute-phase 04` (start proxy)
+
+**Session 2026-03-23 — SkyGate v1.0 milestone complete (autonomous)**
+
+- Ran `/gsd:autonomous` — executed all remaining phases, milestone lifecycle, and cleanup
+- Phase 1 finished: plan 01-05 (OverlayFS + first-boot) executed, routing role path gap fixed (45fc8bf), verified (human_needed — 5 items require Pi hardware)
+- Phases 2 & 3 confirmed complete from prior sessions — ROADMAP checkboxes synced
+- Phase 4 executed: 3/3 plans across 3 sequential waves
+  - 04-01: YAML config loader, ECDSA CA cert generation, SQLite compression logging (11 tests)
+  - 04-02: WebP image transcoder (q30/800px/500ms), JS/CSS/HTML minifier, Content-Type dispatch (23 tests)
+  - 04-03: goproxy MITM with conditional SNI bypass, LRU CertStorage, main.go, Dockerfile, Docker Compose (9 tests)
+  - Phase 4 verified: 11/11 must-haves, PROXY-01 + PROXY-02 satisfied
+- Phase 5 planned + executed: research → plan (3 plans, 2 waves) → checker found 1 blocker (proxy per-device mode awareness missing) → revised → verified → executed
+  - 05-01 (Wave 1): Root CA (SSID CN, 3-year, ECDSA P-256) + intermediate CA (MaxPathLen=0, 1-year) + 28 hardcoded never-MITM domains
+  - 05-02 (Wave 1): Per-device Quick Connect/Max Savings API, nftables maxsavings_macs set, /api/mode/ips endpoint, .mobileconfig + .crt download, 4 HTML pages
+  - 05-03 (Wave 2): Ansible certificate role, proxy MaxSavingsIPSet polling, Docker CA volume, Makefile provision-ca target
+  - Phase 5 verified: 14/14 must-haves, CERT-01 + CERT-02 + CERT-03 satisfied
+- Milestone audit: integration checker found 6 wiring issues — all fixed inline:
+  - dashboard + certificate roles added to Ansible playbook
+  - dashboard_api_url corrected (10.0.0.2:8080 → 10.13.13.2:80)
+  - nftables.d include directive added
+  - cert-bypass-domains.yaml path fixed in certificate role
+  - captive portal → mode-select link added
+- Milestone completed: PROJECT.md evolved, ROADMAP.md reorganized, archives created, git tag v1.0
+- Repo created: github.com/quartermint/skygate (public), pushed main + v1.0 tag
+- Phase directories archived to .planning/milestones/v1.0-phases/
+- 218 files changed, +33,037 lines, 117 commits total across all sessions
+- 4 Go packages, all tests passing (bypass-daemon, dashboard-daemon, proxy-server, tunnel-monitor)
+- 18/18 v1 requirements satisfied, 5/5 phases complete
+- Carryover: 5 Phase 1 human verification items (require Pi hardware), Nyquist validation partial (4/5 phases)
+- Next: `/gsd:new-milestone` for v2.0 or hardware testing on Pi
