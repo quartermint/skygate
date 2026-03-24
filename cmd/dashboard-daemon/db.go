@@ -121,6 +121,12 @@ func (d *DB) migrate() error {
 		accepted_at INTEGER NOT NULL,
 		ip_addr TEXT
 	);
+
+	CREATE TABLE IF NOT EXISTS device_modes (
+		mac_addr TEXT PRIMARY KEY,
+		mode TEXT NOT NULL DEFAULT 'quickconnect',
+		updated_at INTEGER NOT NULL
+	);
 	`
 	if _, err := d.db.Exec(schema); err != nil {
 		return fmt.Errorf("creating schema: %w", err)
@@ -226,6 +232,82 @@ func (d *DB) WriteDevice(mac, hostname, oui string) error {
 		return fmt.Errorf("writing device: %w", err)
 	}
 	return nil
+}
+
+// SetDeviceMode persists a device's mode selection (quickconnect or maxsavings).
+func (d *DB) SetDeviceMode(mac, mode string) error {
+	now := time.Now().Unix()
+	_, err := d.db.Exec(
+		"INSERT INTO device_modes (mac_addr, mode, updated_at) VALUES (?, ?, ?) ON CONFLICT(mac_addr) DO UPDATE SET mode=excluded.mode, updated_at=excluded.updated_at",
+		mac, mode, now,
+	)
+	if err != nil {
+		return fmt.Errorf("setting device mode for %s: %w", mac, err)
+	}
+	return nil
+}
+
+// GetDeviceMode returns the mode for a device. Returns "quickconnect" for unknown MACs (default per D-02).
+func (d *DB) GetDeviceMode(mac string) (string, error) {
+	var mode string
+	err := d.db.QueryRow("SELECT mode FROM device_modes WHERE mac_addr = ?", mac).Scan(&mode)
+	if err != nil {
+		if err.Error() == "sql: no rows in result set" {
+			return "quickconnect", nil
+		}
+		return "", fmt.Errorf("getting device mode for %s: %w", mac, err)
+	}
+	return mode, nil
+}
+
+// GetMaxSavingsMACs returns all MAC addresses with mode "maxsavings".
+func (d *DB) GetMaxSavingsMACs() ([]string, error) {
+	rows, err := d.db.Query("SELECT mac_addr FROM device_modes WHERE mode = 'maxsavings'")
+	if err != nil {
+		return nil, fmt.Errorf("querying maxsavings MACs: %w", err)
+	}
+	defer rows.Close()
+
+	var macs []string
+	for rows.Next() {
+		var mac string
+		if err := rows.Scan(&mac); err != nil {
+			return nil, fmt.Errorf("scanning maxsavings MAC: %w", err)
+		}
+		macs = append(macs, mac)
+	}
+	if macs == nil {
+		macs = []string{}
+	}
+	return macs, rows.Err()
+}
+
+// GetMaxSavingsIPs returns source IPs of devices with mode "maxsavings" by
+// joining device_modes with portal_accepted. This is the data source for the
+// remote proxy's per-device MITM decision set (per Research Pattern 3).
+func (d *DB) GetMaxSavingsIPs() ([]string, error) {
+	rows, err := d.db.Query(`
+		SELECT DISTINCT pa.ip_addr FROM device_modes dm
+		INNER JOIN portal_accepted pa ON dm.mac_addr = pa.mac_addr
+		WHERE dm.mode = 'maxsavings' AND pa.ip_addr != ''
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("querying maxsavings IPs: %w", err)
+	}
+	defer rows.Close()
+
+	var ips []string
+	for rows.Next() {
+		var ip string
+		if err := rows.Scan(&ip); err != nil {
+			return nil, fmt.Errorf("scanning maxsavings IP: %w", err)
+		}
+		ips = append(ips, ip)
+	}
+	if ips == nil {
+		ips = []string{}
+	}
+	return ips, rows.Err()
 }
 
 // GetDevices returns all known devices.
