@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate - Install Certificate (Android)</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .install-page {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+        .install-page h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .install-subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .step {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: #3b82f6;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .step h2 {
+            font-size: 1.1rem;
+            color: #f8fafc;
+            margin-bottom: 8px;
+        }
+        .step p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .download-btn {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .download-btn:hover {
+            background: #2563eb;
+        }
+        .info-box {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 20px;
+            margin-bottom: 16px;
+            color: #93c5fd;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .info-box strong {
+            color: #60a5fa;
+        }
+        .done-section {
+            text-align: center;
+            margin-top: 32px;
+        }
+        .done-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .done-btn:hover {
+            background: #059669;
+        }
+        .back-link {
+            display: block;
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="install-page">
+        <h1>Install Certificate (Android)</h1>
+        <p class="install-subtitle">2 quick steps to enable Max Savings on your Android device</p>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h2>Download Certificate</h2>
+            <p>Tap the button below to download the SkyGate CA certificate.</p>
+            <a href="/ca.crt" class="download-btn">Download Certificate</a>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h2>Install Certificate</h2>
+            <p>When prompted, select <strong>CA Certificate</strong> and confirm the installation.</p>
+            <p>You may need to enter your device PIN or pattern to proceed.</p>
+        </div>
+
+        <div class="info-box">
+            <strong>Important:</strong> Max Savings optimizes browser traffic (Chrome, Firefox, Edge). Native apps use certificate pinning and will continue using DNS-only savings regardless of this setting.
+        </div>
+
+        <div class="done-section">
+            <a href="/static/index.html" class="done-btn">Done - Go to Dashboard</a>
+            <a href="/static/mode-select.html" class="back-link">Back to mode selection</a>
+        </div>
+    </div>
+</body>
+</html>

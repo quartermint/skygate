@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SkyGate - Remove Certificate</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .remove-page {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+        .remove-page h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .remove-subtitle {
+            color: #94a3b8;
+            margin-bottom: 32px;
+        }
+        .platform-section {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .platform-section h2 {
+            font-size: 1.1rem;
+            color: #f8fafc;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .platform-icon {
+            font-size: 1.3rem;
+        }
+        .platform-section p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .path {
+            color: #38bdf8;
+            font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+            font-size: 0.85rem;
+        }
+        .reassurance {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 24px;
+            color: #6ee7b7;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+        .back-section {
+            text-align: center;
+            margin-top: 32px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 14px 32px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .back-btn:hover {
+            background: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="remove-page">
+        <h1>Remove SkyGate Certificate After Your Flight</h1>
+        <p class="remove-subtitle">The SkyGate CA certificate is only needed during your flight. Remove it when you land.</p>
+
+        <div class="platform-section">
+            <h2><span class="platform-icon">&#63743;</span> iOS / iPadOS</h2>
+            <p>Open <span class="path">Settings &gt; General &gt; VPN &amp; Device Management</span></p>
+            <p>Tap <strong>SkyGate Max Savings</strong>, then tap <strong>Remove Profile</strong>.</p>
+        </div>
+
+        <div class="platform-section">
+            <h2><span class="platform-icon">&#129302;</span> Android</h2>
+            <p>Open <span class="path">Settings &gt; Security &gt; Encryption &amp; Credentials &gt; Trusted Credentials</span></p>
+            <p>Go to the <strong>User</strong> tab, find <strong>SkyGate</strong>, and tap <strong>Remove</strong>.</p>
+        </div>
+
+        <div class="platform-section">
+            <h2><span class="platform-icon">&#128187;</span> macOS</h2>
+            <p>Open <strong>Keychain Access</strong> (Applications &gt; Utilities).</p>
+            <p>In the <strong>System</strong> keychain, find <strong>SkyGate CA</strong> and delete it.</p>
+        </div>
+
+        <div class="platform-section">
+            <h2><span class="platform-icon">&#128421;</span> Windows</h2>
+            <p>Press <span class="path">Win+R</span>, type <span class="path">certmgr.msc</span>, press Enter.</p>
+            <p>Navigate to <strong>Trusted Root Certification Authorities &gt; Certificates</strong>.</p>
+            <p>Find <strong>SkyGate CA</strong>, right-click, and select <strong>Delete</strong>.</p>
+        </div>
+
+        <div class="reassurance">
+            If you used Quick Connect mode, no certificate was installed and no action is needed.
+        </div>
+
+        <div class="back-section">
+            <a href="/static/index.html" class="back-btn">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

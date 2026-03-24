@@ -16,6 +16,7 @@ type Config struct {
 	DBPath          string `yaml:"db_path"`
 	CategoriesFile  string `yaml:"categories_file"`
 	StaticDir       string `yaml:"static_dir"`
+	CACertPath      string `yaml:"ca_cert_path"`
 }
 
 // LoadConfig reads and parses a YAML config file.
@@ -52,5 +53,8 @@ func applyDefaults(cfg *Config) {
 	}
 	if cfg.StaticDir == "" {
 		cfg.StaticDir = "/opt/skygate/static"
+	}
+	if cfg.CACertPath == "" {
+		cfg.CACertPath = "/data/skygate/ca/root-ca.crt"
 	}
 }
