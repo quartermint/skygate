@@ -91,6 +91,25 @@ func main() {
 	// Captive portal
 	mux.HandleFunc("/api/captive/accept", srv.HandleCaptiveAccept)
 
+	// Mode selection (Phase 5)
+	mux.HandleFunc("/api/mode", func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodGet:
+			srv.HandleGetMode(w, r)
+		case http.MethodPost:
+			srv.HandleSetMode(w, r)
+		default:
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// Max Savings IP list for remote proxy mode awareness (Phase 5, per Research Pattern 3)
+	mux.HandleFunc("/api/mode/ips", srv.HandleGetMaxSavingsIPs)
+
+	// Certificate download (Phase 5)
+	mux.HandleFunc("/ca.mobileconfig", srv.HandleMobileConfig)
+	mux.HandleFunc("/ca.crt", srv.HandleCertDownloadDER)
+
 	// Static file serving (dashboard HTML, JS, CSS)
 	if cfg.StaticDir != "" {
 		mux.Handle("/", http.FileServer(http.Dir(cfg.StaticDir)))
