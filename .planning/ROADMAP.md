@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: Usage Dashboard** - Per-device usage tracking, captive portal, bandwidth savings display -- the "whoa" moment *(2026-03-23)*
 - [x] **Phase 3: Tunnel Infrastructure** - WireGuard tunnel to remote server with policy-based routing *(2026-03-23)*
 - [x] **Phase 4: Content Compression Proxy** - Go-based MITM proxy on remote server for image transcoding and JS/CSS minification *(2026-03-23)*
-- [ ] **Phase 5: Certificate Management** - CA cert distribution, two-tier UX ("Quick Connect" vs "Max Savings"), cert-pinning bypass
+- [x] **Phase 5: Certificate Management** - CA cert distribution, two-tier UX ("Quick Connect" vs "Max Savings"), cert-pinning bypass *(2026-03-24)*
 
 ## Phase Details
 
@@ -101,7 +101,7 @@ Plans:
 Plans:
 - [x] 05-01-PLAN.md -- Certificate infrastructure: root CA generation (SSID in CN), intermediate CA delegation, hardcoded never-MITM bypass domains
 - [x] 05-02-PLAN.md -- Mode selection UX: per-device Quick Connect/Max Savings API, .mobileconfig and .crt download handlers, cert install guide pages
-- [ ] 05-03-PLAN.md -- Integration wiring: Ansible certificate role, nftables maxsavings_macs set, Docker Compose intermediate CA volume, proxy main.go updates
+- [x] 05-03-PLAN.md -- Integration wiring: Ansible certificate role, nftables maxsavings_macs set, Docker Compose intermediate CA volume, proxy main.go updates
 
 ## Progress
 
@@ -114,4 +114,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Usage Dashboard | 4/4 | Complete | 2026-03-23 |
 | 3. Tunnel Infrastructure | 3/3 | Complete | 2026-03-23 |
 | 4. Content Compression Proxy | 3/3 | Complete | 2026-03-23 |
-| 5. Certificate Management | 2/3 | In Progress|  |
+| 5. Certificate Management | 3/3 | Complete | 2026-03-24 |
