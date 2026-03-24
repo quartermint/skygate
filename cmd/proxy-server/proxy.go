@@ -10,6 +10,48 @@ import (
 	"github.com/elazarl/goproxy"
 )
 
+// hardcodedBypassDomains contains domains that must NEVER be MITM-intercepted,
+// regardless of user configuration. Per D-14: banking, auth, gov, health, and
+// payment domains are hardcoded to prevent breaking cert-pinned apps.
+// These cannot be removed by user config -- only extended.
+var hardcodedBypassDomains = []string{
+	// Banking & Financial
+	"*.chase.com", "*.bankofamerica.com", "*.wellsfargo.com",
+	"*.capitalone.com", "*.citi.com", "*.schwab.com",
+	"*.fidelity.com", "*.vanguard.com", "*.usaa.com",
+	// Authentication & Identity
+	"*.apple.com", "accounts.google.com", "login.microsoftonline.com",
+	"*.okta.com", "*.auth0.com", "*.duosecurity.com",
+	// Payments
+	"*.paypal.com", "*.venmo.com", "*.stripe.com", "*.square.com",
+	// Government
+	"*.gov", "*.mil",
+	// Health
+	"*.epic.com", "*.mychart.com",
+	// Aviation (belt-and-suspenders with DNS bypass)
+	"*.foreflight.com", "*.garmin.com", "*.faa.gov",
+}
+
+// BuildBypassSet creates a BypassSet that merges hardcoded never-MITM domains
+// with user-defined domains from a YAML config file. Hardcoded domains cannot
+// be removed by user config. If the user file is missing or invalid, only
+// hardcoded domains are used (graceful degradation).
+func BuildBypassSet(userBypassPath string) (*BypassSet, error) {
+	// Start with a copy of hardcoded domains (never modify original).
+	allDomains := make([]string, len(hardcodedBypassDomains))
+	copy(allDomains, hardcodedBypassDomains)
+
+	// Try loading user-defined domains. Graceful degradation on error.
+	userDomains, err := LoadBypassDomains(userBypassPath)
+	if err == nil {
+		allDomains = append(allDomains, userDomains...)
+	} else {
+		log.Printf("WARN: Failed to load user bypass domains from %s: %v (using hardcoded only)", userBypassPath, err)
+	}
+
+	return NewBypassSet(allDomains), nil
+}
+
 // BypassSet holds domains that should skip MITM interception.
 type BypassSet struct {
 	exact    map[string]bool // exact domain matches

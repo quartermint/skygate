@@ -14,8 +14,10 @@ type Config struct {
 	CAKeyPath         string       `yaml:"ca_key_path"`
 	CADownloadAddr    string       `yaml:"ca_download_addr"`
 	DBPath            string       `yaml:"db_path"`
-	BypassDomainsFile string       `yaml:"bypass_domains_file"`
-	Verbose           bool         `yaml:"verbose"`
+	BypassDomainsFile      string       `yaml:"bypass_domains_file"`
+	IntermediateCACertPath string       `yaml:"intermediate_ca_cert_path"`
+	IntermediateCAKeyPath  string       `yaml:"intermediate_ca_key_path"`
+	Verbose                bool         `yaml:"verbose"`
 	Image             ImageConfig  `yaml:"image"`
 	Minify            MinifyConfig `yaml:"minify"`
 	Log               LogConfig    `yaml:"log"`
