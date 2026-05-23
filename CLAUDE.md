@@ -182,7 +182,10 @@ Use these entry points:
 Do not make direct repo edits outside a GSD workflow unless the user explicitly asks to bypass it.
 <!-- GSD:workflow-end -->
 
+## Cross-Project Notes (session mining 2026-04-25)
 
+- Mac Mini available as remote proxy option (Tailscale-fronted).
+- DNS blocking + content proxy + QoS are the three primary control surfaces.
 
 <!-- GSD:profile-start -->
 ## Developer Profile
