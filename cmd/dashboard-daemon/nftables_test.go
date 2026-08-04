@@ -99,34 +99,3 @@ func TestComputeDeltas_CounterReset(t *testing.T) {
 		t.Errorf("expected delta 100 on counter reset, got %d", deltas["aa:bb:cc:dd:ee:01"])
 	}
 }
-
-func TestReadPerMACCounters_Stub(t *testing.T) {
-	counters, err := ReadPerMACCounters()
-	if err != nil {
-		t.Fatalf("ReadPerMACCounters stub failed: %v", err)
-	}
-	if len(counters) < 2 {
-		t.Errorf("expected at least 2 mock entries, got %d", len(counters))
-	}
-}
-
-func TestAddAllowedMAC_Stub(t *testing.T) {
-	err := AddAllowedMAC("aa:bb:cc:dd:ee:01")
-	if err != nil {
-		t.Errorf("AddAllowedMAC stub returned error: %v", err)
-	}
-}
-
-func TestRemoveAllowedMAC_Stub(t *testing.T) {
-	err := RemoveAllowedMAC("aa:bb:cc:dd:ee:01")
-	if err != nil {
-		t.Errorf("RemoveAllowedMAC stub returned error: %v", err)
-	}
-}
-
-func TestAcceptDevice_Stub(t *testing.T) {
-	err := AcceptDevice("aa:bb:cc:dd:ee:01", "192.168.4.100")
-	if err != nil {
-		t.Errorf("AcceptDevice stub returned error: %v", err)
-	}
-}

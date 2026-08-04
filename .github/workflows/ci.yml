@@ -8,14 +8,18 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      # test-go runs `go test ./...`, which sweeps in cmd/proxy-server. That
+      # package needs libwebp headers via CGo, so the build fails without them
+      # even though `make build` itself excludes the proxy.
+      - name: install system deps
+        run: sudo apt-get update && sudo apt-get install -y libwebp-dev bats
       - name: build daemons
         run: make build
       - name: go tests
         run: make test-go
-      - name: install bats
-        run: sudo apt-get update && sudo apt-get install -y bats
       - name: bats tests (nftables rules, CAKE rate convergence)
         run: make test-bats
+
       # lint-ansible skips silently when the tool is absent, so install it here
       # to make sure CI actually runs the lint rather than quietly passing.
       - name: install ansible-lint
