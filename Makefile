@@ -60,8 +60,12 @@ test-proxy: ## Run proxy server tests (requires libwebp-dev)
 
 lint: lint-ansible ## Run all linters
 
-lint-ansible: ## Lint Ansible playbooks
-	cd $(ANSIBLE_DIR) && ansible-lint playbook.yml
+lint-ansible: ## Lint Ansible playbooks (skipped when ansible-lint is not installed)
+	@if command -v ansible-lint >/dev/null 2>&1; then \
+		cd $(ANSIBLE_DIR) && ansible-lint playbook.yml; \
+	else \
+		echo "ansible-lint not installed, skipping (CI installs it)"; \
+	fi
 
 ## Docker
 
