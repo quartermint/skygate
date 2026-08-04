@@ -23,8 +23,7 @@
     state: present
     reload: true
     sysctl_file: /etc/sysctl.d/99-skygate.conf
-  notify: reload sysctl
-
+  notify: Reload sysctl
 - name: Disable IPv6 (all interfaces)
   ansible.posix.sysctl:
     name: net.ipv6.conf.all.disable_ipv6
@@ -32,8 +31,7 @@
     state: present
     reload: true
     sysctl_file: /etc/sysctl.d/99-skygate.conf
-  notify: reload sysctl
-
+  notify: Reload sysctl
 - name: Disable IPv6 (default)
   ansible.posix.sysctl:
     name: net.ipv6.conf.default.disable_ipv6
@@ -41,8 +39,7 @@
     state: present
     reload: true
     sysctl_file: /etc/sysctl.d/99-skygate.conf
-  notify: reload sysctl
-
+  notify: Reload sysctl
 - name: Create SkyGate data directory
   ansible.builtin.file:
     path: "{{ skygate_data_dir }}"
@@ -74,8 +71,8 @@
     src: fstab-data.j2
     dest: /etc/fstab.d/skygate-data.conf
     mode: '0644'
-  # NOTE: On systems without fstab.d support, use lineinfile on /etc/fstab instead
-  ignore_errors: true
+  # systems without fstab.d support fall through to the lineinfile task below
+  failed_when: false
 
 - name: Add data partition to fstab (fallback)
   ansible.builtin.lineinfile:

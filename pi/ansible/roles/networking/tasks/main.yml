@@ -13,26 +13,29 @@
     name: wpa_supplicant
     state: stopped
     enabled: false
-  ignore_errors: true
+  # absent on images that never ran wpa_supplicant
+  failed_when: false
 
 - name: Deploy NetworkManager unmanaged config
   ansible.builtin.template:
     src: unmanaged.conf.j2
     dest: /etc/NetworkManager/conf.d/skygate-unmanaged.conf
     mode: "0644"
-  notify: restart networkmanager
-
+  notify: Restart networkmanager
 - name: Check if AP interface has static IP
   ansible.builtin.shell: |
-    ip addr show {{ ap_interface }} 2>/dev/null | grep -q "{{ ap_gateway }}"
-  register: ap_ip_check
+    set -o pipefail
+    grep -q "{{ ap_gateway }}" <<< "$(ip addr show {{ ap_interface }} 2>/dev/null)"
+  args:
+    executable: /bin/bash
+  register: networking_ap_ip_check
   changed_when: false
   failed_when: false
 
 - name: Configure static IP on AP interface
   ansible.builtin.command: >
     ip addr add {{ ap_gateway }}/24 dev {{ ap_interface }}
-  when: ap_ip_check.rc != 0
+  when: networking_ap_ip_check.rc != 0
   changed_when: true
 
 - name: Deploy hostapd configuration
@@ -40,8 +43,7 @@
     src: hostapd.conf.j2
     dest: /etc/hostapd/hostapd.conf
     mode: "0600"
-  notify: restart hostapd
-
+  notify: Restart hostapd
 - name: Unmask hostapd (Bookworm ships it masked)
   ansible.builtin.systemd:
     name: hostapd
@@ -58,8 +60,7 @@
     src: nftables.conf.j2
     dest: /etc/nftables.conf
     mode: "0644"
-  notify: restart nftables
-
+  notify: Restart nftables
 - name: Enable and start nftables
   ansible.builtin.systemd:
     name: nftables
@@ -68,15 +69,18 @@
 
 - name: Configure policy routing for aviation bypass
   ansible.builtin.shell: |
+    set -o pipefail
     CHANGED=0
-    if ! ip rule show | grep -q "fwmark 0x1"; then
+    if ! grep -q "fwmark 0x1" <<< "$(ip rule show)"; then
       ip rule add fwmark 0x1 table 100 priority 100
       CHANGED=1
     fi
-    if ! ip route show table 100 | grep -q "default"; then
+    if ! grep -q "default" <<< "$(ip route show table 100)"; then
       ip route add default dev {{ uplink_interface }} table 100
       CHANGED=1
     fi
     echo "changed=$CHANGED"
-  register: policy_routing_result
-  changed_when: "'changed=1' in policy_routing_result.stdout"
+  args:
+    executable: /bin/bash
+  register: networking_policy_routing_result
+  changed_when: "'changed=1' in networking_policy_routing_result.stdout"

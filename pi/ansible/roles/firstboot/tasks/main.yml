@@ -15,8 +15,7 @@
     src: skygate-firstboot.service.j2
     dest: /etc/systemd/system/skygate-firstboot.service
     mode: '0644'
-  notify: reload systemd
-
+  notify: Reload systemd
 - name: Enable first-boot service (runs on actual first boot)
   ansible.builtin.systemd:
     name: skygate-firstboot

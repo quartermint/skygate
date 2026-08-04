@@ -13,7 +13,7 @@
     group: root
     mode: "0600"
   notify:
-    - restart wg-quick
+    - Restart wg-quick
   when: wg_enabled | default(false)
 
 - name: Deploy tunnel monitor config
@@ -24,7 +24,7 @@
     group: root
     mode: "0644"
   notify:
-    - restart skygate-tunnel-monitor
+    - Restart skygate-tunnel-monitor
   when: wg_enabled | default(false)
 
 - name: Deploy tunnel monitor binary
@@ -35,7 +35,7 @@
     group: root
     mode: "0755"
   notify:
-    - restart skygate-tunnel-monitor
+    - Restart skygate-tunnel-monitor
   when: wg_enabled | default(false)
 
 - name: Deploy tunnel monitor systemd service
@@ -46,24 +46,27 @@
     group: root
     mode: "0644"
   notify:
-    - reload systemd
-    - restart skygate-tunnel-monitor
+    - Reload systemd
+    - Restart skygate-tunnel-monitor
   when: wg_enabled | default(false)
 
 - name: Configure policy routing for tunnel (table 200)
   ansible.builtin.shell: |
+    set -o pipefail
     CHANGED=0
-    if ! ip rule show | grep -q "fwmark 0x2"; then
+    if ! grep -q "fwmark 0x2" <<< "$(ip rule show)"; then
       ip rule add fwmark 0x2 table 200 priority 200
       CHANGED=1
     fi
-    if ! ip route show table 200 | grep -q "default"; then
+    if ! grep -q "default" <<< "$(ip route show table 200)"; then
       ip route add default dev wg0 table 200
       CHANGED=1
     fi
     echo "changed=$CHANGED"
-  register: tunnel_routing_result
-  changed_when: "'changed=1' in tunnel_routing_result.stdout"
+  args:
+    executable: /bin/bash
+  register: wireguard_tunnel_routing_result
+  changed_when: "'changed=1' in wireguard_tunnel_routing_result.stdout"
   when: wg_enabled | default(false)
 
 - name: Enable and start WireGuard tunnel

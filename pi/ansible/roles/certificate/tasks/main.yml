@@ -23,21 +23,22 @@
 - name: Check if root CA exists
   ansible.builtin.stat:
     path: /data/skygate/ca/root-ca.crt
-  register: root_ca_stat
+  register: certificate_root_ca_stat
 
 - name: Generate root CA and intermediate CA (first boot only)
   ansible.builtin.command:
     cmd: /opt/skygate/bin/ca-generate.sh
-  when: not root_ca_stat.stat.exists
-  notify: restart dashboard
-
+  when: not certificate_root_ca_stat.stat.exists
+  # guarded by the stat above, so reaching this task always creates the CA
+  changed_when: true
+  notify: Restart dashboard
 - name: Set root CA key permissions
   ansible.builtin.file:
     path: /data/skygate/ca/root-ca.key
     owner: root
     group: root
     mode: "0600"
-  when: root_ca_stat.stat.exists or not root_ca_stat.stat.exists
+  when: certificate_root_ca_stat.stat.exists or not certificate_root_ca_stat.stat.exists
 
 - name: Deploy user cert bypass domains config
   ansible.builtin.copy:
@@ -46,4 +47,4 @@
     owner: root
     group: root
     mode: "0644"
-  notify: restart dashboard
+  notify: Restart dashboard

@@ -15,8 +15,7 @@
     group: root
     mode: "0755"
   notify:
-    - restart skygate-dashboard
-
+    - Restart skygate-dashboard
 - name: Deploy static files
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../../pi/static/"
@@ -26,8 +25,7 @@
     mode: "0644"
     directory_mode: "0755"
   notify:
-    - reload caddy
-
+    - Reload caddy
 - name: Deploy dashboard config
   ansible.builtin.template:
     src: dashboard.yaml.j2
@@ -36,8 +34,7 @@
     group: root
     mode: "0644"
   notify:
-    - restart skygate-dashboard
-
+    - Restart skygate-dashboard
 - name: Deploy domain categories
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/../../pi/config/domain-categories.yaml"
@@ -46,8 +43,7 @@
     group: root
     mode: "0644"
   notify:
-    - restart skygate-dashboard
-
+    - Restart skygate-dashboard
 - name: Deploy Caddyfile
   ansible.builtin.template:
     src: Caddyfile.j2
@@ -56,8 +52,7 @@
     group: root
     mode: "0644"
   notify:
-    - reload caddy
-
+    - Reload caddy
 - name: Deploy systemd service
   ansible.builtin.template:
     src: skygate-dashboard.service.j2
@@ -66,9 +61,8 @@
     group: root
     mode: "0644"
   notify:
-    - reload systemd
-    - restart skygate-dashboard
-
+    - Reload systemd
+    - Restart skygate-dashboard
 - name: Deploy nftables dashboard additions
   ansible.builtin.template:
     src: nftables-dashboard.conf.j2
@@ -77,14 +71,14 @@
     group: root
     mode: "0644"
   notify:
-    - reload nftables
-
+    - Reload nftables
 - name: Install Caddy binary
   ansible.builtin.get_url:
     url: "https://caddyserver.com/api/download?os=linux&arch=arm64"
     dest: /usr/local/bin/caddy
     mode: "0755"
-    creates: /usr/local/bin/caddy
+    # get_url has no `creates` param; force:false is the idempotent form
+    force: false
 
 - name: Create Caddy config directory
   ansible.builtin.file:

@@ -1,16 +1,16 @@
 ---
-- name: reload systemd
+- name: Reload systemd
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: restart wg-quick
+- name: Restart wg-quick
   ansible.builtin.systemd:
     name: wg-quick@wg0
     state: restarted
     daemon_reload: true
   when: wg_enabled | default(false)
 
-- name: restart skygate-tunnel-monitor
+- name: Restart skygate-tunnel-monitor
   ansible.builtin.systemd:
     name: skygate-tunnel-monitor
     state: restarted

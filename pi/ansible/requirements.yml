@@ -1,0 +1,6 @@
+---
+# ansible.posix provides the sysctl and mount modules used by roles/base and
+# roles/networking. Without this the playbook fails at parse time on a machine
+# that has only ansible-core installed.
+collections:
+  - name: ansible.posix

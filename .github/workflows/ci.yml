@@ -8,6 +8,9 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       # test-go runs `go test ./...`, which sweeps in cmd/proxy-server. That
       # package needs libwebp headers via CGo, so the build fails without them
       # even though `make build` itself excludes the proxy.
@@ -19,10 +22,13 @@ jobs:
         run: make test-go
       - name: bats tests (nftables rules, CAKE rate convergence)
         run: make test-bats
-
       # lint-ansible skips silently when the tool is absent, so install it here
       # to make sure CI actually runs the lint rather than quietly passing.
-      - name: install ansible-lint
-        run: pipx install ansible-lint
+      - name: install ansible tooling
+        run: python3 -m pip install ansible-lint
+      # the playbook uses ansible.posix (sysctl, mount); without the collection
+      # ansible-lint fails at syntax-check before it evaluates any rule.
+      - name: install ansible collections
+        run: ansible-galaxy collection install -r pi/ansible/requirements.yml
       - name: ansible lint
         run: make lint-ansible

@@ -30,8 +30,7 @@
     src: pihole.toml.j2
     dest: /etc/pihole/pihole.toml
     mode: "0644"
-  notify: restart pihole-ftl
-
+  notify: Restart pihole-ftl
 - name: Create dnsmasq.d directory
   ansible.builtin.file:
     path: /etc/dnsmasq.d
@@ -43,8 +42,7 @@
     src: 01-skygate-whitelist.conf.j2
     dest: /etc/dnsmasq.d/01-skygate.conf
     mode: "0644"
-  notify: restart pihole-ftl
-
+  notify: Restart pihole-ftl
 - name: Whitelist aviation domains in Pi-hole
   ansible.builtin.command: "pihole --white-regex '{{ item }}'"
   loop:
